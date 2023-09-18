@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Etymos</title>
+</head>
+
+<body>
+  <h1>Etym<span class="highlight-text">o</span>s</h1>
+  <div class="box" id="editor" contenteditable="true"></div>
+  <div class="box" id="suggestions"></div>
+</body>
+<script>
+  const editor = document.getElementById("editor");
+  const suggestionsBox = document.getElementById("suggestions");
+  editor.addEventListener("input", onEditorInput);
+  editor.focus();
+
+  function onEditorInput(event) {
+    const text = editor.innerHTML;
+    const highlightedText = highlightProperNouns(text);
+    setEditorContent(highlightedText);
+    resetCursorPosition();
+  }
+
+  function setEditorContent(content) {
+    editor.innerHTML = content;
+  }
+
+  function setSuggestions(suggestions) {
+    suggestionsBox.innerHTML = suggestions
+      .filter(suggestion => suggestion.replacements.length > 0)
+      .map(suggetionListElement).join("");
+  }
+
+  function suggetionListElement(id, suggestion) {
+    const word = suggestion.word;
+    const replacements = suggestion.replacements;
+    addEtymologyOnlineIframe(word);
+    return `<div class="suggestion" data-suggestion="${word}" data-id="${id}">
+        ${word}: ${replacementElements(word, replacements)}
+      </div>`;
+  }
+
+  function replacementElements(word, replacements) {
+    return replacements
+      .map((replacement) => replacementElement(word, replacement))
+      .join(", ");
+  }
+
+  function replacementElement(word, replacement) {
+    const onclick = `onSuggestionClick(event, '${word}', '${replacement}')`;
+    return `<span class="replacement" onclick="${onclick}">${replacement}</span>`;
+  }
+
+  function addEtymologyOnlineIframe(word) {
+    // https://www.etymonline.com/search?q=golgotha
+    const iframe = document.createElement("iframe");
+    iframe.src = `https://www.etymonline.com/search?q=${word}`;
+    iframe.width = "100%";
+    iframe.height = "400px";
+    iframe.style.border = "none";
+    suggestionsBox.appendChild(iframe);
+    
+  }
+
+  function onSuggestionClick(event, properNoun, replacementString) {
+    const id = event.target.parentElement.dataset.id;
+
+    const properNounElement = document.getElementById(id);
+    properNounElement.outerHTML = replacementString;
+    // remove suggestion based on id
+    removeSuggestion(id, properNoun)
+    resetCursorPosition();
+  }
+
+  function removeSuggestion(id, properNoun) {
+    const suggestions = suggestionsBox.querySelectorAll(".suggestion");
+    suggestions.forEach(suggestion => {
+      if (suggestion.dataset.id === id) {
+        suggestion.remove();
+      }
+    });
+  }
+
+  function resetCursorPosition() {
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.selectNodeContents(editor);
+    range.collapse(false);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+
+  function highlightProperNouns(text) {
+    const cleanText = text.replace(/<[^>]*>/g, "");
+    const properNounRegex = /\b[A-Z][a-z]*\b/g;
+    const matches = cleanText.match(properNounRegex);
+    if (!matches) return cleanText;
+    let id = 0;
+    const highlightedText = cleanText.replace(
+      properNounRegex,
+      (match) => {
+        id++;
+        replaceSuggestionListElement(id, suggestReplacements(match));
+        return `<span class="proper-noun" id="${id}">${match}</span>`;
+    });
+
+    return highlightedText;
+  }
+
+  function replaceSuggestionListElement(id, suggestion) {
+    if (!suggestion) return;
+    const element = suggetionListElement(id, suggestion);
+    // replace the element if it exists
+    let replacement = false;
+    const suggestions = suggestionsBox.querySelectorAll(".suggestion");
+    suggestions.forEach(suggestion => {
+      if (parseInt(suggestion.dataset.id) === id) {
+        suggestion.outerHTML = element;
+        replacement = true;
+      }
+    });
+    // otherwise append it
+    if (!replacement) suggestionsBox.innerHTML += element;
+  }
+
+  function suggestReplacements(properNoun) {
+    // You can use an API here to fetch suggestions based on the proper noun.
+    // For simplicity, I'll provide a local example.
+    const replacements = {
+      "David": {
+        word: properNoun,
+        replacements: ["The beloved", "King of Israel", "Beloved one"]
+      }
+    };
+    return replacements[properNoun] || null
+  }
+
+
+  // helpers
+  function debounce(func, wait, immediate) {
+    let timeout;
+
+    return function executedFunction() {
+      const context = this;
+      const args = arguments;
+
+      const later = function () {
+        timeout = null;
+        if (!immediate) func.apply(context, args);
+      };
+
+      const callNow = immediate && !timeout;
+      clearTimeout(timeout);
+
+      timeout = setTimeout(later, wait);
+
+      if (callNow) func.apply(context, args);
+    };
+  }
+</script>
+<style>
+  :root {
+    --text-color: #53568e;
+    --background-color: white;
+    --highlight-color: rgb(142, 140, 236);
+    --accent-color: rgb(255, 201, 53);
+  }
+
+  body {
+    font-family: Helvetica, sans-serif;
+  }
+
+  h1 {
+    text-align: center;
+  }
+
+  .highlight {
+    background-color: var(--highlight-color);
+  }
+
+  .highlight-text {
+    color: var(--highlight-color);
+  }
+
+  .accent-text {
+    color: var(--accent-color);
+  }
+
+  #editor {
+    height: 400px;
+    margin-bottom: 20px;
+    white-space: pre-wrap;
+  }
+  
+  .box {
+    width: 60%;
+    border: 2px solid var(--highlight-color);
+    border-radius: 10px;
+    padding: 20px;
+    margin: auto;
+  }
+
+  .proper-noun {
+    animation: highlighter 1s forwards;
+  }
+
+  @keyframes highlighter {
+    from {background-color: none;}
+    to {background-color: var(--accent-color);}
+  }
+
+  .suggestion {
+    border: 1px solid var(--text-color);
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+  }
+
+  .replacement {
+    cursor: pointer;
+    color: var(--text-color);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .replacement:hover {
+    background-color: var(--accent-color);
+  }
+</style>
+
+</html>
