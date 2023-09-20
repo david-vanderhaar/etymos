@@ -54,14 +54,33 @@
 
   function suggetionListElement(id, suggestion) {
     if (!suggestion) return "";
+
     const word = suggestion.word;
-    const replacements = suggestion.replacements;
     const iframe = createEtymologyOnlineIframe(word);
-    return `<div class="suggestion" data-suggestion="${word}" data-id="${id}">
-        ${word}: ${replacementElements(word, replacements)}
-        ${iframe.outerHTML}
-      </div>`;
+    if (!suggestion.replacements.length) {
+      return `<div class="suggestion" data-suggestion="${word}" data-id="${id}">
+          ${word}
+          ${iframe.outerHTML}
+        </div>`;
+    } else {
+      const replacements = suggestion.replacements;
+      return `<div class="suggestion" data-suggestion="${word}" data-id="${id}">
+          ${word}: ${replacementElements(word, replacements)}
+          ${iframe.outerHTML}
+        </div>`;
+    }
   }
+
+  // function suggetionListElement(id, suggestion) {
+  //   if (!suggestion) return "";
+  //   const word = suggestion.word;
+  //   const replacements = suggestion.replacements;
+  //   const iframe = createEtymologyOnlineIframe(word);
+  //   return `<div class="suggestion" data-suggestion="${word}" data-id="${id}">
+  //       ${word}: ${replacementElements(word, replacements)}
+  //       ${iframe.outerHTML}
+  //     </div>`;
+  // }
 
   function replacementElements(word, replacements) {
     return replacements
@@ -117,6 +136,9 @@
   }
 
   function suggestReplacements(properNoun) {
+    if (!properNoun) return null;
+    if (properNoun.length < 3) return null;
+
     // You can use an API here to fetch suggestions based on the proper noun.
     // For simplicity, I'll provide a local example.
     const replacements = {
@@ -125,7 +147,8 @@
         replacements: ["The beloved", "King of Israel", "Beloved one"]
       }
     };
-    return replacements[properNoun] || null
+    return replacements[properNoun] || { word: properNoun, replacements: []}
+    // return replacements[properNoun] || null
   }
 
 
