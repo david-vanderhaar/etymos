@@ -5,16 +5,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Etymos</title>
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="https://unpkg.com/tippy.js@6"></script>
+  <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light-border.css"/>
+  <link rel="stylesheet" href="main.css">
 </head>
 
 <body>
   <h1>Etym<span class="highlight-text">o</span>s</h1>
   <div class="box" id="editor" contenteditable="true"></div>
-  <div class="box" id="suggestions"></div>
 </body>
 <script>
   const editor = document.getElementById("editor");
-  const suggestionsBox = document.getElementById("suggestions");
   editor.addEventListener("input", onEditorInput);
   editor.focus();
 
@@ -22,6 +24,7 @@
     const text = editor.innerHTML;
     const highlightedText = highlightProperNouns(text);
     setEditorContent(highlightedText);
+    createTooltips();
     resetCursorPosition();
   }
 
@@ -29,18 +32,34 @@
     editor.innerHTML = content;
   }
 
-  function setSuggestions(suggestions) {
-    suggestionsBox.innerHTML = suggestions
-      .filter(suggestion => suggestion.replacements.length > 0)
-      .map(suggetionListElement).join("");
+  function createTooltips() {
+    // using tippy.js
+    const properNouns = editor.querySelectorAll(".proper-noun");
+    properNouns.forEach(properNoun => {
+      const id = properNoun.id;
+      const content = suggetionListElement(id, suggestReplacements(properNoun.innerHTML))
+      if (content) {
+        properNoun.classList.add("animate-highlight");
+        const tooltip = tippy(properNoun, {
+          content: content,
+          allowHTML: true,
+          interactive: true,
+          placement: "bottom",
+          maxWidth: "none",
+          theme: "light-border",
+        });
+      }
+    });
   }
 
   function suggetionListElement(id, suggestion) {
+    if (!suggestion) return "";
     const word = suggestion.word;
     const replacements = suggestion.replacements;
-    addEtymologyOnlineIframe(word);
+    const iframe = createEtymologyOnlineIframe(word);
     return `<div class="suggestion" data-suggestion="${word}" data-id="${id}">
         ${word}: ${replacementElements(word, replacements)}
+        ${iframe.outerHTML}
       </div>`;
   }
 
@@ -55,34 +74,21 @@
     return `<span class="replacement" onclick="${onclick}">${replacement}</span>`;
   }
 
-  function addEtymologyOnlineIframe(word) {
+  function createEtymologyOnlineIframe(word) {
     // https://www.etymonline.com/search?q=golgotha
     const iframe = document.createElement("iframe");
     iframe.src = `https://www.etymonline.com/search?q=${word}`;
     iframe.width = "100%";
     iframe.height = "400px";
     iframe.style.border = "none";
-    suggestionsBox.appendChild(iframe);
-    
+    return iframe;
   }
 
   function onSuggestionClick(event, properNoun, replacementString) {
     const id = event.target.parentElement.dataset.id;
-
     const properNounElement = document.getElementById(id);
     properNounElement.outerHTML = replacementString;
-    // remove suggestion based on id
-    removeSuggestion(id, properNoun)
     resetCursorPosition();
-  }
-
-  function removeSuggestion(id, properNoun) {
-    const suggestions = suggestionsBox.querySelectorAll(".suggestion");
-    suggestions.forEach(suggestion => {
-      if (suggestion.dataset.id === id) {
-        suggestion.remove();
-      }
-    });
   }
 
   function resetCursorPosition() {
@@ -104,27 +110,10 @@
       properNounRegex,
       (match) => {
         id++;
-        replaceSuggestionListElement(id, suggestReplacements(match));
-        return `<span class="proper-noun" id="${id}">${match}</span>`;
+        return `<span class="proper-noun tooltip" id="${id}">${match}</span>`;
     });
 
     return highlightedText;
-  }
-
-  function replaceSuggestionListElement(id, suggestion) {
-    if (!suggestion) return;
-    const element = suggetionListElement(id, suggestion);
-    // replace the element if it exists
-    let replacement = false;
-    const suggestions = suggestionsBox.querySelectorAll(".suggestion");
-    suggestions.forEach(suggestion => {
-      if (parseInt(suggestion.dataset.id) === id) {
-        suggestion.outerHTML = element;
-        replacement = true;
-      }
-    });
-    // otherwise append it
-    if (!replacement) suggestionsBox.innerHTML += element;
   }
 
   function suggestReplacements(properNoun) {
@@ -162,73 +151,4 @@
     };
   }
 </script>
-<style>
-  :root {
-    --text-color: #53568e;
-    --background-color: white;
-    --highlight-color: rgb(142, 140, 236);
-    --accent-color: rgb(255, 201, 53);
-  }
-
-  body {
-    font-family: Helvetica, sans-serif;
-  }
-
-  h1 {
-    text-align: center;
-  }
-
-  .highlight {
-    background-color: var(--highlight-color);
-  }
-
-  .highlight-text {
-    color: var(--highlight-color);
-  }
-
-  .accent-text {
-    color: var(--accent-color);
-  }
-
-  #editor {
-    height: 400px;
-    margin-bottom: 20px;
-    white-space: pre-wrap;
-  }
-  
-  .box {
-    width: 60%;
-    border: 2px solid var(--highlight-color);
-    border-radius: 10px;
-    padding: 20px;
-    margin: auto;
-  }
-
-  .proper-noun {
-    animation: highlighter 1s forwards;
-  }
-
-  @keyframes highlighter {
-    from {background-color: none;}
-    to {background-color: var(--accent-color);}
-  }
-
-  .suggestion {
-    border: 1px solid var(--text-color);
-    border-radius: 5px;
-    padding: 5px;
-    margin: 5px;
-  }
-
-  .replacement {
-    cursor: pointer;
-    color: var(--text-color);
-    transition: all 0.2s ease-in-out;
-  }
-
-  .replacement:hover {
-    background-color: var(--accent-color);
-  }
-</style>
-
 </html>
