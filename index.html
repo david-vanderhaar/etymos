@@ -22,10 +22,26 @@
 
   function onEditorInput(event) {
     const text = editor.innerHTML;
-    const highlightedText = highlightProperNouns(text);
+    const [highlightedText, cleanText] = highlightProperNouns(text);
     setEditorContent(highlightedText);
     createTooltips();
-    resetCursorPosition();
+    resetCursorPositionToEnd()
+  }
+
+  function highlightProperNouns(text) {
+    const cleanText = text.replace(/<[^>]*>/g, "");
+    const properNounRegex = /\b[A-Z][a-z]*\b/g;
+    const matches = cleanText.match(properNounRegex);
+    if (!matches) return [cleanText, cleanText];
+    let id = 0;
+    const highlightedText = cleanText.replace(
+      properNounRegex,
+      (match) => {
+        id++;
+        return `<span class="proper-noun tooltip" id="${id}">${match}</span>`;
+    });
+
+    return [highlightedText, cleanText];
   }
 
   function setEditorContent(content) {
@@ -52,6 +68,15 @@
     });
   }
 
+  function resetCursorPositionToEnd() {
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.selectNodeContents(editor);
+    range.collapse(false);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+
   function suggetionListElement(id, suggestion) {
     if (!suggestion) return "";
 
@@ -71,17 +96,6 @@
     }
   }
 
-  // function suggetionListElement(id, suggestion) {
-  //   if (!suggestion) return "";
-  //   const word = suggestion.word;
-  //   const replacements = suggestion.replacements;
-  //   const iframe = createEtymologyOnlineIframe(word);
-  //   return `<div class="suggestion" data-suggestion="${word}" data-id="${id}">
-  //       ${word}: ${replacementElements(word, replacements)}
-  //       ${iframe.outerHTML}
-  //     </div>`;
-  // }
-
   function replacementElements(word, replacements) {
     return replacements
       .map((replacement) => replacementElement(word, replacement))
@@ -93,6 +107,14 @@
     return `<span class="replacement" onclick="${onclick}">${replacement}</span>`;
   }
 
+  function onSuggestionClick(event, properNoun, replacementString) {
+    const id = event.target.parentElement.dataset.id;
+    const properNounElement = document.getElementById(id);
+    properNounElement.outerHTML = replacementString;
+    resetCursorPositionToEnd();
+  }
+
+
   function createEtymologyOnlineIframe(word) {
     // https://www.etymonline.com/search?q=golgotha
     const iframe = document.createElement("iframe");
@@ -101,38 +123,6 @@
     iframe.height = "400px";
     iframe.style.border = "none";
     return iframe;
-  }
-
-  function onSuggestionClick(event, properNoun, replacementString) {
-    const id = event.target.parentElement.dataset.id;
-    const properNounElement = document.getElementById(id);
-    properNounElement.outerHTML = replacementString;
-    resetCursorPosition();
-  }
-
-  function resetCursorPosition() {
-    const selection = window.getSelection();
-    const range = document.createRange();
-    range.selectNodeContents(editor);
-    range.collapse(false);
-    selection.removeAllRanges();
-    selection.addRange(range);
-  }
-
-  function highlightProperNouns(text) {
-    const cleanText = text.replace(/<[^>]*>/g, "");
-    const properNounRegex = /\b[A-Z][a-z]*\b/g;
-    const matches = cleanText.match(properNounRegex);
-    if (!matches) return cleanText;
-    let id = 0;
-    const highlightedText = cleanText.replace(
-      properNounRegex,
-      (match) => {
-        id++;
-        return `<span class="proper-noun tooltip" id="${id}">${match}</span>`;
-    });
-
-    return highlightedText;
   }
 
   function suggestReplacements(properNoun) {
@@ -150,7 +140,6 @@
     return replacements[properNoun] || { word: properNoun, replacements: []}
     // return replacements[properNoun] || null
   }
-
 
   // helpers
   function debounce(func, wait, immediate) {
