@@ -11,6 +11,8 @@
   <script src="https://unpkg.com/tippy.js@6"></script>
   <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light-border.css"/>
   <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/translucent.css"/>
+
+  <!-- APIs -->
   
   <!-- quill -->
   <link rel="stylesheet" href="https://cdn.quilljs.com/2.0.0-dev.3/quill.bubble.css">
@@ -18,6 +20,7 @@
   <script src="lib/quill-autoformat.js"></script>
   
   <!-- custom -->
+  <script src="lib/strongs-hebrew-dictionary.js"></script>
   <link rel="stylesheet" href="main.css">
 </head>
 
@@ -113,47 +116,78 @@
     return replacements[properNoun] || { word: properNoun, replacements: []}
     // return replacements[properNoun] || null
   }
+
+  // function findReplacements(properNoun) {
+  //   if (!properNoun) null;
+  //   if (properNoun.length < 3) return null;
+
+  //   // Normalize the input proper noun (e.g., convert to lowercase and remove spaces)
+  //   const normalizedProperNoun = properNoun.toLowerCase().replace(/\s/g, '');
+  //   console.log(normalizedProperNoun);
+  //   const suggestions = [];
+
+  //   // Iterate through the Strong's Concordance data
+  //   for (const strongsNumber in STRONGS_DICTIONARY) {
+  //     const entry = STRONGS_DICTIONARY[strongsNumber];
+  //     const strongsDef = entry.strongs_def?.toLowerCase();
+  //     const normalizedStrongsDef = strongsDef === undefined ? '' : strongsDef;
+  //     const kjvDef = entry.kjv_def?.toLowerCase();
+  //     const normalizedKjvDef = kjvDef === undefined ? '' : kjvDef;
+
+  //     // Check if the normalized proper noun is found in the strongs_def or kjv_def
+  //     if (normalizedStrongsDef.includes(normalizedProperNoun)) {
+  //       console.log(normalizedStrongsDef);
+  //       suggestions.push(entry.strongsDef);
+  //     }
+  //     if (normalizedKjvDef.includes(normalizedProperNoun)) {
+  //       suggestions.push(entry.kjv_def);
+  //     }
+  //   }
+
+  //   return { word: properNoun, replacements: suggestions }
+  // }
+
   // custom quill blot
   const Embed = Quill.import('blots/embed');
 
-class Propernoun extends Embed {
-  static blotName = 'propernoun';
-  static className = 'ql-propernoun';
-  static tagName = 'SPAN';
+  class Propernoun extends Embed {
+    static blotName = 'propernoun';
+    static className = 'ql-propernoun';
+    static tagName = 'SPAN';
 
-  static triggerRegex = /[\s,.;:?!]/;
-  static findRegex = /\b[A-Z][a-z]*\b/g;
+    static triggerRegex = /[\s,.;:?!]/;
+    static findRegex = /\b[A-Z][a-z]*\b/g;
 
-  static create(value) {
-    const node = super.create(value);
-    node.setAttribute('id', uuid());
-    node.textContent = value;
-    Propernoun.createTooltip(node, value);
-    return node;
-  }
+    static create(value) {
+      const node = super.create(value);
+      node.setAttribute('id', uuid());
+      node.textContent = value;
+      Propernoun.createTooltip(node, value);
+      return node;
+    }
 
-  static value(domNode) {
-    return 'domNode.textContent;'
-  }
+    static value(domNode) {
+      return 'domNode.textContent;'
+    }
 
-  static createTooltip(node, value) {
-    const content = suggetionListElement(node.id, findReplacements(value))
-    if (content) {
-      const tooltip = tippy(node, {
-        content: content,
-        allowHTML: true,
-        interactive: true,
-        placement: "bottom",
-        maxWidth: "none",
-        theme: "translucent",
-        appendTo: () => document.body,
-        onCreate: () => {node.classList.add("animate-highlight")},
-      });
+    static createTooltip(node, value) {
+      const content = suggetionListElement(node.id, findReplacements(value))
+      if (content) {
+        const tooltip = tippy(node, {
+          content: content,
+          allowHTML: true,
+          interactive: true,
+          placement: "bottom",
+          maxWidth: "none",
+          theme: "translucent",
+          appendTo: () => document.body,
+          onCreate: () => {node.classList.add("animate-highlight")},
+        });
+      }
     }
   }
-}
 
-Quill.register(Propernoun, true);
+  Quill.register(Propernoun, true);
 
 
   Quill.register({
