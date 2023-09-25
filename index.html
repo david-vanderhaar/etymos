@@ -5,87 +5,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Etymos</title>
+
+  <!-- tippy -->
   <script src="https://unpkg.com/@popperjs/core@2"></script>
   <script src="https://unpkg.com/tippy.js@6"></script>
   <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light-border.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/translucent.css"/>
+  
+  <!-- quill -->
+  <link rel="stylesheet" href="https://cdn.quilljs.com/2.0.0-dev.3/quill.bubble.css">
+  <script src="https://cdn.quilljs.com/2.0.0-dev.3/quill.js"></script>
+  <script src="lib/quill-autoformat.js"></script>
+  
+  <!-- custom -->
   <link rel="stylesheet" href="main.css">
 </head>
 
 <body>
   <h1>Etym<span class="highlight-text">o</span>s</h1>
-  <div class="box" id="editor" contenteditable="true"></div>
+  <div class="box" id="editor"></div>
 </body>
 <script>
-  const editor = document.getElementById("editor");
-  editor.addEventListener("input", onEditorInput);
-  editor.addEventListener("keydown", onEditorKeyDown);
-  editor.focus();
+  // constants
+  const ETYMOLOGY_IFRAME_ENABLED = false;
 
-  function onEditorInput(event) {
-    const text = editor.innerHTML;
-    const [highlightedText, cleanText] = highlightProperNouns(text);
-    setEditorContent(highlightedText);
-    createTooltips();
-    resetCursorPositionToEnd()
-  }
-
-  function onEditorKeyDown(event) {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      editor.innerHTML += "<br><br>";
-      resetCursorPositionToEnd();
-    }
-  }
-
-  function highlightProperNouns(text) {
-    // replace br tags with newlines
-    text = text.replace(/<br>/g, "\n");
-    const cleanText = text.replace(/<[^>]*>/g, "");
-    const properNounRegex = /\b[A-Z][a-z]*\b/g;
-    const matches = cleanText.match(properNounRegex);
-    if (!matches) return [cleanText, cleanText];
-    let id = 0;
-    const highlightedText = cleanText.replace(
-      properNounRegex,
-      (match) => {
-        id++;
-        return `<span class="proper-noun tooltip" id="${id}">${match}</span>`;
-    });
-
-    return [highlightedText, cleanText];
-  }
-
-  function setEditorContent(content) {
-    editor.innerHTML = content;
-  }
-
-  function createTooltips() {
-    // using tippy.js
-    const properNouns = editor.querySelectorAll(".proper-noun");
-    properNouns.forEach(properNoun => {
-      const id = properNoun.id;
-      const content = suggetionListElement(id, suggestReplacements(properNoun.innerHTML))
-      if (content) {
-        properNoun.classList.add("animate-highlight");
-        const tooltip = tippy(properNoun, {
-          content: content,
-          allowHTML: true,
-          interactive: true,
-          placement: "bottom",
-          maxWidth: "none",
-          theme: "light-border",
-        });
-      }
-    });
-  }
-
-  function resetCursorPositionToEnd() {
-    const selection = window.getSelection();
-    const range = document.createRange();
-    range.selectNodeContents(editor);
-    range.collapse(false);
-    selection.removeAllRanges();
-    selection.addRange(range);
+  // helper functions
+  function uuid() {
+    return Math.random().toString(36).substring(2) + Date.now().toString(36);
   }
 
   function suggetionListElement(id, suggestion) {
@@ -107,6 +53,31 @@
     }
   }
 
+  function suggetionListElement(id, suggestion) {
+    if (!suggestion) return "";
+    const word = suggestion.word;
+    return `<div class="suggestion" data-suggestion="${word}" data-id="${id}">
+        ${word}: ${replacementElements(word, suggestion.replacements)}
+        ${iframeElement(word)}
+      </div>`;
+  }
+
+  function iframeElement(word) {
+    if (!ETYMOLOGY_IFRAME_ENABLED) return "";
+    const iframe = createEtymologyOnlineIframe(word);
+    return iframe.outerHTML;
+  }
+
+  function createEtymologyOnlineIframe(word) {
+    // https://www.etymonline.com/search?q=golgotha
+    const iframe = document.createElement("iframe");
+    iframe.src = `https://www.etymonline.com/search?q=${word}`;
+    iframe.width = "100%";
+    iframe.height = "400px";
+    iframe.style.border = "none";
+    return iframe;
+  }
+
   function replacementElements(word, replacements) {
     return replacements
       .map((replacement) => replacementElement(word, replacement))
@@ -120,23 +91,14 @@
 
   function onSuggestionClick(event, properNoun, replacementString) {
     const id = event.target.parentElement.dataset.id;
-    const properNounElement = document.getElementById(id);
-    properNounElement.outerHTML = replacementString;
-    resetCursorPositionToEnd();
+    const node = document.getElementById(id);
+    if (node) {
+      node.innerText = replacementString;
+      quill.focus();
+    }
   }
 
-
-  function createEtymologyOnlineIframe(word) {
-    // https://www.etymonline.com/search?q=golgotha
-    const iframe = document.createElement("iframe");
-    iframe.src = `https://www.etymonline.com/search?q=${word}`;
-    iframe.width = "100%";
-    iframe.height = "400px";
-    iframe.style.border = "none";
-    return iframe;
-  }
-
-  function suggestReplacements(properNoun) {
+  function findReplacements(properNoun) {
     if (!properNoun) return null;
     if (properNoun.length < 3) return null;
 
@@ -151,27 +113,96 @@
     return replacements[properNoun] || { word: properNoun, replacements: []}
     // return replacements[properNoun] || null
   }
+  // custom quill blot
+  const Embed = Quill.import('blots/embed');
 
-  // helpers
-  function debounce(func, wait, immediate) {
-    let timeout;
+class Propernoun extends Embed {
+  static blotName = 'propernoun';
+  static className = 'ql-propernoun';
+  static tagName = 'SPAN';
 
-    return function executedFunction() {
-      const context = this;
-      const args = arguments;
+  static triggerRegex = /[\s,.;:?!]/;
+  static findRegex = /\b[A-Z][a-z]*\b/g;
 
-      const later = function () {
-        timeout = null;
-        if (!immediate) func.apply(context, args);
-      };
-
-      const callNow = immediate && !timeout;
-      clearTimeout(timeout);
-
-      timeout = setTimeout(later, wait);
-
-      if (callNow) func.apply(context, args);
-    };
+  static create(value) {
+    const node = super.create(value);
+    node.setAttribute('id', uuid());
+    node.textContent = value;
+    Propernoun.createTooltip(node, value);
+    return node;
   }
+
+  static value(domNode) {
+    return 'domNode.textContent;'
+  }
+
+  static createTooltip(node, value) {
+    const content = suggetionListElement(node.id, findReplacements(value))
+    if (content) {
+      const tooltip = tippy(node, {
+        content: content,
+        allowHTML: true,
+        interactive: true,
+        placement: "bottom",
+        maxWidth: "none",
+        theme: "translucent",
+        appendTo: () => document.body,
+        onCreate: () => {node.classList.add("animate-highlight")},
+      });
+    }
+  }
+}
+
+Quill.register(Propernoun, true);
+
+
+  Quill.register({
+    'formats/at': Propernoun,
+  });
+
+  // clean formatting handler
+  function cleanFormatHandler(value) {
+    if (value) {
+      quill.format('bold', false);
+      quill.format('italic', false);
+      quill.format('underline', false);
+      quill.format('strike', false);
+      quill.format('background', false);
+      quill.format('color', 'var(--text-color)');
+    }
+  }
+
+  const toolbarOptions = {
+    container: [
+      ['bold', 'italic', 'underline', 'strike', 'clean'],
+    ],
+    handlers: {
+      clean: cleanFormatHandler,
+    }
+  }
+
+  const quill = new Quill(
+    '#editor',
+    {
+      theme: 'bubble',
+      placeholder: 'up, out, down, in...',
+      
+      modules: {
+        toolbar: toolbarOptions,
+        autoformat: {
+          // automatically highlight proper nouns
+          propernoun: {
+            trigger: Propernoun.triggerRegex,
+            find: Propernoun.findRegex,
+            // format: 'bold',
+            insert: 'propernoun',
+          },
+        },
+      },
+    }
+  );
+
+  quill.focus();
 </script>
 </html>
+
