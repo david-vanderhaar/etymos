@@ -30,7 +30,8 @@
 </body>
 <script>
   // constants
-  const ETYMOLOGY_IFRAME_ENABLED = false;
+  const ETYMOLOGY_IFRAME_ENABLED = true;
+  const BLUE_LETTER_IFRAME_ENABLED = true;
 
   // helper functions
   function uuid() {
@@ -39,42 +40,37 @@
 
   function suggetionListElement(id, suggestion) {
     if (!suggestion) return "";
-
-    const word = suggestion.word;
-    const iframe = createEtymologyOnlineIframe(word);
-    if (!suggestion.replacements.length) {
-      return `<div class="suggestion" data-suggestion="${word}" data-id="${id}">
-          ${word}
-          ${iframe.outerHTML}
-        </div>`;
-    } else {
-      const replacements = suggestion.replacements;
-      return `<div class="suggestion" data-suggestion="${word}" data-id="${id}">
-          ${word}: ${replacementElements(word, replacements)}
-          ${iframe.outerHTML}
-        </div>`;
-    }
-  }
-
-  function suggetionListElement(id, suggestion) {
-    if (!suggestion) return "";
     const word = suggestion.word;
     return `<div class="suggestion" data-suggestion="${word}" data-id="${id}">
         ${word}: ${replacementElements(word, suggestion.replacements)}
-        ${iframeElement(word)}
+        ${etymologyIframeElement(word)}
+        ${blueLetterIframeElement(word)}
       </div>`;
   }
 
-  function iframeElement(word) {
+  function blueLetterIframeElement(word) {
+    if (!BLUE_LETTER_IFRAME_ENABLED) return "";
+    const iframe = createBlueLetterIframe(word);
+    return iframe.outerHTML;
+  }
+
+  function etymologyIframeElement(word) {
     if (!ETYMOLOGY_IFRAME_ENABLED) return "";
     const iframe = createEtymologyOnlineIframe(word);
     return iframe.outerHTML;
   }
 
+  function createBlueLetterIframe(word) {
+    return createIframeElementBySource(`https://www.blueletterbible.org/search/search.cfm?Criteria=${word}&t=KJV#s=s_lexiconc`)
+  }
+
   function createEtymologyOnlineIframe(word) {
-    // https://www.etymonline.com/search?q=golgotha
+    return createIframeElementBySource(`https://www.etymonline.com/search?q=${word}`);
+  }
+
+  function createIframeElementBySource(source) {
     const iframe = document.createElement("iframe");
-    iframe.src = `https://www.etymonline.com/search?q=${word}`;
+    iframe.src = source;
     iframe.width = "100%";
     iframe.height = "400px";
     iframe.style.border = "none";
@@ -178,6 +174,7 @@
           allowHTML: true,
           interactive: true,
           placement: "bottom",
+          // maxWidth: "400px",
           maxWidth: "none",
           theme: "translucent",
           appendTo: () => document.body,

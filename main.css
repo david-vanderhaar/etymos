@@ -71,3 +71,7 @@ h1 {
   background-color: var(--accent-color);
   color: var(--background-color);
 }
+
+.suggestion {
+  padding: 10px;
+}
