@@ -34,6 +34,7 @@
   let ETYMOLOGY_IFRAME_ENABLED = true;
   let BLUE_LETTER_IFRAME_ENABLED = true;
   let IFRAME_DISPLAY = false;
+  preventNavigation();
 
   function preventNavigation() {
     // prevent page navigation during iframe interaction
@@ -47,18 +48,12 @@
     window.onbeforeunload = null;
   }
 
-  function toggleIframeEnabled(event) {
+  function toggleIframeEnabled() {
     IFRAME_DISPLAY = !IFRAME_DISPLAY;
+    setIframeDisplay(IFRAME_DISPLAY);
     // ETYMOLOGY_IFRAME_ENABLED = !ETYMOLOGY_IFRAME_ENABLED;
     // BLUE_LETTER_IFRAME_ENABLED = !BLUE_LETTER_IFRAME_ENABLED;
     // if (ETYMOLOGY_IFRAME_ENABLED || BLUE_LETTER_IFRAME_ENABLED) {
-    if (IFRAME_DISPLAY) {
-      preventNavigation();
-      setIframeDisplay(true);
-    } else {
-      allowNavigation();
-      setIframeDisplay(false);
-    }
   }
 
   function setIframeDisplay(show) {
