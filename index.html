@@ -30,6 +30,12 @@
   <div class="box" id="editor"></div>
 </body>
 <script>
+  // prevent page navigation during iframe interaction
+  window.onbeforeunload = function(event) {
+    event.preventDefault();
+    return false;
+  };
+
   // constants
   const ETYMOLOGY_IFRAME_ENABLED = true;
   const BLUE_LETTER_IFRAME_ENABLED = true;
@@ -164,7 +170,7 @@
     }
 
     static value(domNode) {
-      return 'domNode.textContent;'
+      return domNode.textContent
     }
 
     static createTooltip(node, value) {

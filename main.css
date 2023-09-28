@@ -49,7 +49,7 @@ body {
 }
 
 .box {
-  width: 60%;
+  max-width: 600px;
   border: 2px solid var(--highlight-color);
   border-radius: 10px;
   margin: auto;
@@ -83,4 +83,11 @@ body {
 
 .suggestion {
   padding: 20px;
+}
+
+/* suggestion padding 0 on mobile */
+@media only screen and (max-width: 600px) {
+  .suggestion {
+    padding: 0;
+  }
 }
