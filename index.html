@@ -25,20 +25,65 @@
 </head>
 
 <body>
-  <h1 class="title">Etym<span class="highlight-text">o</span>s</h1>
+  <h1 class="title">Etym<span id="iframe-toggle" class="highlight-text" onclick="handleClickEtymos()">o</span>s</h1>
   <p class="subtitle highlight-text">a simple text editor, inspired by the mundanity of names and places.</p>
   <div class="box" id="editor"></div>
 </body>
 <script>
-  // prevent page navigation during iframe interaction
-  window.onbeforeunload = function(event) {
-    event.preventDefault();
-    return false;
-  };
+  // globals
+  let ETYMOLOGY_IFRAME_ENABLED = true;
+  let BLUE_LETTER_IFRAME_ENABLED = true;
+  let IFRAME_DISPLAY = false;
 
-  // constants
-  const ETYMOLOGY_IFRAME_ENABLED = true;
-  const BLUE_LETTER_IFRAME_ENABLED = true;
+  function preventNavigation() {
+    // prevent page navigation during iframe interaction
+    window.onbeforeunload = function(event) {
+      event.preventDefault();
+      return false;
+    };
+  }
+
+  function allowNavigation() {
+    window.onbeforeunload = null;
+  }
+
+  function toggleIframeEnabled(event) {
+    IFRAME_DISPLAY = !IFRAME_DISPLAY;
+    // ETYMOLOGY_IFRAME_ENABLED = !ETYMOLOGY_IFRAME_ENABLED;
+    // BLUE_LETTER_IFRAME_ENABLED = !BLUE_LETTER_IFRAME_ENABLED;
+    // if (ETYMOLOGY_IFRAME_ENABLED || BLUE_LETTER_IFRAME_ENABLED) {
+    if (IFRAME_DISPLAY) {
+      preventNavigation();
+      setIframeDisplay(true);
+    } else {
+      allowNavigation();
+      setIframeDisplay(false);
+    }
+  }
+
+  function setIframeDisplay(show) {
+    // root css iframe-display
+    const root = document.documentElement;
+    if (!show) {
+      root.style.setProperty('--iframe-display', 'none');
+    } else {
+      root.style.setProperty('--iframe-display', 'block');
+    }
+  }
+
+  function handleClickEtymos() {
+    // get element by id iframe-toggle
+    const target = document.getElementById("iframe-toggle");
+    if (target.classList.contains("highlight-text")) {
+      target.classList.remove("highlight-text");
+      target.classList.add("accent-text");
+    } else {
+      target.classList.remove("accent-text");
+      target.classList.add("highlight-text");
+    }
+
+    toggleIframeEnabled();
+  }
 
   // helper functions
   function uuid() {
@@ -50,8 +95,8 @@
     const word = suggestion.word;
     return `<div class="suggestion" data-suggestion="${word}" data-id="${id}">
         ${word}: ${replacementElements(word, suggestion.replacements)}
-        ${etymologyIframeElement(word)}
         ${blueLetterIframeElement(word)}
+        ${etymologyIframeElement(word)}
       </div>`;
   }
 
@@ -78,9 +123,6 @@
   function createIframeElementBySource(source) {
     const iframe = document.createElement("iframe");
     iframe.src = source;
-    iframe.width = "100%";
-    iframe.height = "400px";
-    iframe.style.border = "none";
     return iframe;
   }
 
@@ -120,35 +162,97 @@
     // return replacements[properNoun] || null
   }
 
-  // function findReplacements(properNoun) {
-  //   if (!properNoun) null;
-  //   if (properNoun.length < 3) return null;
+  function findReplacements_v2(properNoun) {
+    if (!properNoun) null;
+    if (properNoun.length < 3) return null;
 
-  //   // Normalize the input proper noun (e.g., convert to lowercase and remove spaces)
-  //   const normalizedProperNoun = properNoun.toLowerCase().replace(/\s/g, '');
-  //   console.log(normalizedProperNoun);
-  //   const suggestions = [];
+    // Normalize the input proper noun (e.g., convert to lowercase and remove spaces)
+    const normalizedProperNoun = properNoun.toLowerCase().replace(/\s/g, '');
+    console.log(normalizedProperNoun);
+    const suggestions = [];
 
-  //   // Iterate through the Strong's Concordance data
-  //   for (const strongsNumber in STRONGS_DICTIONARY) {
-  //     const entry = STRONGS_DICTIONARY[strongsNumber];
-  //     const strongsDef = entry.strongs_def?.toLowerCase();
-  //     const normalizedStrongsDef = strongsDef === undefined ? '' : strongsDef;
-  //     const kjvDef = entry.kjv_def?.toLowerCase();
-  //     const normalizedKjvDef = kjvDef === undefined ? '' : kjvDef;
+    // Iterate through the Strong's Concordance data
+    for (const strongsNumber in STRONGS_DICTIONARY) {
+      const entry = STRONGS_DICTIONARY[strongsNumber];
+      const strongsDef = entry.strongs_def?.toLowerCase();
+      const normalizedStrongsDef = strongsDef === undefined ? '' : strongsDef;
+      const kjvDef = entry.kjv_def?.toLowerCase();
+      const normalizedKjvDef = kjvDef === undefined ? '' : kjvDef;
 
-  //     // Check if the normalized proper noun is found in the strongs_def or kjv_def
-  //     if (normalizedStrongsDef.includes(normalizedProperNoun)) {
-  //       console.log(normalizedStrongsDef);
-  //       suggestions.push(entry.strongsDef);
-  //     }
-  //     if (normalizedKjvDef.includes(normalizedProperNoun)) {
-  //       suggestions.push(entry.kjv_def);
-  //     }
-  //   }
+      // Check if the normalized proper noun is found in the strongs_def or kjv_def
+      if (normalizedStrongsDef.includes(normalizedProperNoun)) {
+        console.log(normalizedStrongsDef);
+        suggestions.push(entry.strongsDef);
+      }
+      if (normalizedKjvDef.includes(normalizedProperNoun)) {
+        suggestions.push(entry.kjv_def);
+      }
+    }
 
-  //   return { word: properNoun, replacements: suggestions }
-  // }
+    return { word: properNoun, replacements: suggestions }
+  }
+
+  function findReplacements_v3(properNoun) {
+    if (!properNoun) null;
+    if (properNoun.length < 3) return null;
+
+    // Normalize the input proper noun (e.g., convert to lowercase and remove spaces)
+    const normalizedProperNoun = properNoun.toLowerCase().replace(/\s/g, '');
+    const suggestions = [];
+
+    // Iterate through the Strong's Concordance data
+    // for each entry, check if the normalized proper noun is found at the beginning of the strongs_def or kjv_def
+    // if so, search the derivation field for a strongs number (H + any number of digits)
+    // if found, search the dictionary for that strongs number
+    // if found, add the strongs_def and kjv_def to the suggestions
+    for (const strongsNumber in STRONGS_DICTIONARY) {
+      const entry = STRONGS_DICTIONARY[strongsNumber];
+      const strongsDef = entry.strongs_def?.toLowerCase();
+      const normalizedStrongsDef = strongsDef === undefined ? '' : strongsDef;
+      const kjvDef = entry.kjv_def?.toLowerCase();
+      const normalizedKjvDef = kjvDef === undefined ? '' : kjvDef;
+      // Check if the normalized proper noun is found at the beginning of the strongs_def or kjv_def
+      if (normalizedStrongsDef.startsWith(normalizedProperNoun)) {
+        suggestions.push(entry.strongs_def);
+        suggestions.push(entry.kjv_def);
+        // Search the derivation field for a strongs number (H + any number of digits)
+        const derivationMatch = entry.derivation?.match(/H\d+/);
+        if (derivationMatch) {
+          const derivedNumber = derivationMatch[0];
+          // Search the dictionary for that strongs number
+          const derivedEntry = STRONGS_DICTIONARY[derivedNumber];
+          if (derivedEntry) {
+            suggestions.push(derivedEntry.strongs_def);
+            suggestions.push(derivedEntry.kjv_def);
+          }
+        }
+      }
+      if (normalizedKjvDef.startsWith(normalizedProperNoun)) {
+        suggestions.push(entry.strongs_def);
+        suggestions.push(entry.kjv_def);
+        // Search the derivation field for a strongs number (H + any number of digits)
+        const derivationMatch = entry.derivation?.match(/H\d+/);
+        if (derivationMatch) {
+          const derivedNumber = derivationMatch[0];
+          // Search the dictionary for that strongs number
+          const derivedEntry = STRONGS_DICTIONARY[derivedNumber];
+          if (derivedEntry) {
+            suggestions.push(derivedEntry.strongs_def);
+            suggestions.push(derivedEntry.kjv_def);
+          }
+        }
+      }
+    }
+
+    // sanitize suggestions
+    const uniqueSuggestions = [...new Set(suggestions)];
+    // escape single quotes
+    const escapedSuggestions = uniqueSuggestions.map((suggestion) => suggestion.replace(/'/g, "\\'"));
+
+    // break suggestions into words by splitting on commas
+    const words = escapedSuggestions.map((suggestion) => suggestion.split(","));
+    return { word: properNoun, replacements: words.flat().map((word) => word.trim()) }
+  }
 
   // custom quill blot
   const Embed = Quill.import('blots/embed');
@@ -174,7 +278,7 @@
     }
 
     static createTooltip(node, value) {
-      const content = suggetionListElement(node.id, findReplacements(value))
+      const content = suggetionListElement(node.id, findReplacements_v3(value))
       if (content) {
         const tooltip = tippy(node, {
           content: content,
@@ -192,11 +296,7 @@
   }
 
   Quill.register(Propernoun, true);
-
-
-  Quill.register({
-    'formats/at': Propernoun,
-  });
+  Quill.register({'formats/at': Propernoun});
 
   // clean formatting handler
   function cleanFormatHandler(value) {
@@ -223,8 +323,6 @@
     '#editor',
     {
       theme: 'bubble',
-      // placeholder: 'up, out, down, in...',
-      
       modules: {
         toolbar: toolbarOptions,
         autoformat: {
