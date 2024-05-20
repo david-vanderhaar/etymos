@@ -111,6 +111,8 @@ import { STRONGS_DICTIONARY } from './lib/strongs-hebrew-dictionary.js'
     return `<span class="replacement" onclick="${onclick}">${replacement}</span>`;
   }
 
+  // this should be available in the global scope
+  // this is done by adding the function to the window object
   function onSuggestionClick(event, properNoun, replacementString) {
     const id = event.target.parentElement.dataset.id;
     const node = document.getElementById(id);
@@ -119,6 +121,8 @@ import { STRONGS_DICTIONARY } from './lib/strongs-hebrew-dictionary.js'
       quill.focus();
     }
   }
+
+  window.onSuggestionClick = onSuggestionClick;
 
   function findReplacements(properNoun) {
     if (!properNoun) return null;
