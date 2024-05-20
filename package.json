@@ -6,12 +6,15 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite build && vite preview"
+    "deploy": "touch dist/.nojekyll && gh-pages -d dist -t true",
+    "publish": "pnpm run build && pnpm run deploy",
+    "preview": "pnpm run build && vite preview"
   },
   "devDependencies": {
     "vite": "^5.2.0"
   },
   "dependencies": {
+    "gh-pages": "^6.1.1",
     "quill": "2.0.2",
     "quill-autoformat": "^0.1.2",
     "tippy.js": "^6.3.7"
