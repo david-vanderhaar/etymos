@@ -7,44 +7,6 @@ import 'quill-autoformat'
 import tippy from 'tippy.js';
 import { STRONGS_DICTIONARY } from './lib/strongs-hebrew-dictionary.js'
 
-
-
-  // globals
-  let ETYMOLOGY_IFRAME_ENABLED = true;
-  let BLUE_LETTER_IFRAME_ENABLED = true;
-  let IFRAME_DISPLAY = false;
-  preventNavigation();
-
-  function preventNavigation() {
-    // prevent page navigation during iframe interaction
-    window.onbeforeunload = function(event) {
-      event.preventDefault();
-      return false;
-    };
-  }
-
-  function allowNavigation() {
-    window.onbeforeunload = null;
-  }
-
-  function toggleIframeEnabled() {
-    IFRAME_DISPLAY = !IFRAME_DISPLAY;
-    setIframeDisplay(IFRAME_DISPLAY);
-    // ETYMOLOGY_IFRAME_ENABLED = !ETYMOLOGY_IFRAME_ENABLED;
-    // BLUE_LETTER_IFRAME_ENABLED = !BLUE_LETTER_IFRAME_ENABLED;
-    // if (ETYMOLOGY_IFRAME_ENABLED || BLUE_LETTER_IFRAME_ENABLED) {
-  }
-
-  function setIframeDisplay(show) {
-    // root css iframe-display
-    const root = document.documentElement;
-    if (!show) {
-      root.style.setProperty('--iframe-display', 'none');
-    } else {
-      root.style.setProperty('--iframe-display', 'block');
-    }
-  }
-
   function handleClickEtymos() {
     // get element by id iframe-toggle
     const target = document.getElementById("iframe-toggle");
@@ -55,8 +17,6 @@ import { STRONGS_DICTIONARY } from './lib/strongs-hebrew-dictionary.js'
       target.classList.remove("accent-text");
       target.classList.add("highlight-text");
     }
-
-    toggleIframeEnabled();
   }
 
   // helper functions
@@ -69,36 +29,28 @@ import { STRONGS_DICTIONARY } from './lib/strongs-hebrew-dictionary.js'
     const word = suggestion.word;
     return `<div class="suggestion" data-suggestion="${word}" data-id="${id}">
         ${word}: ${replacementElements(word, suggestion.replacements)}
-        ${blueLetterIframeElement(word)}
-        ${etymologyIframeElement(word)}
+        ${nounEditorElement(id)}
       </div>`;
   }
 
-  function blueLetterIframeElement(word) {
-    if (!BLUE_LETTER_IFRAME_ENABLED) return "";
-    const iframe = createBlueLetterIframe(word);
-    return iframe.outerHTML;
+  function nounEditorElement(id) {
+    // when input changes, update the suggestion
+    const onchange = `onChangeNoun(event, '${id}')`
+    const element = `<input type="text" class="noun-editor" data-id="${id}" oninput="${onchange}">`;
+    
+    return element
   }
 
-  function etymologyIframeElement(word) {
-    if (!ETYMOLOGY_IFRAME_ENABLED) return "";
-    const iframe = createEtymologyOnlineIframe(word);
-    return iframe.outerHTML;
+  function onChangeNoun(event, quillNodeId) {
+    const value = event.target.value;
+    const node = document.getElementById(quillNodeId);
+    if (node) {
+      // change innerText of the first child span
+      node.firstElementChild.innerText = value;
+    }
   }
 
-  function createBlueLetterIframe(word) {
-    return createIframeElementBySource(`https://www.blueletterbible.org/search/search.cfm?Criteria=${word}&t=KJV#s=s_lexiconc`)
-  }
-
-  function createEtymologyOnlineIframe(word) {
-    return createIframeElementBySource(`https://www.etymonline.com/search?q=${word}`);
-  }
-
-  function createIframeElementBySource(source) {
-    const iframe = document.createElement("iframe");
-    iframe.src = source;
-    return iframe;
-  }
+  window.onChangeNoun = onChangeNoun;
 
   function replacementElements(word, replacements) {
     return replacements
@@ -117,7 +69,7 @@ import { STRONGS_DICTIONARY } from './lib/strongs-hebrew-dictionary.js'
     const id = event.target.parentElement.dataset.id;
     const node = document.getElementById(id);
     if (node) {
-      node.innerText = replacementString;
+      node.firstElementChild.innerText = replacementString;
       quill.focus();
     }
   }
