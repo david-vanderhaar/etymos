@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    %sveltekit.head%
+  </head>
+  <body>
+    <div>%sveltekit.body%</div>
+  </body>
+  <style>
+    :root {
+      ---background-color: #eadcbd;
+      ---text-color: #262422;
+    }
+    html {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      transition: all 0.5s ease;
+    }
+  </style>
+</html>
