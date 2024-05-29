@@ -1,5 +1,6 @@
 <script>
   import { onMount } from "svelte";
+  import * as StrongsConcordance from '../lib/concordances/strongs/finder';
   
   let editor;
 	
@@ -32,6 +33,9 @@
 
     quill.focus();
   });
+
+  // example of finder code
+  console.log(StrongsConcordance.findReplacements_v3('David'))
 </script>
 
 <div bind:this={editor} class="box" id="editor"></div>

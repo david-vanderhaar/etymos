@@ -4,6 +4,7 @@
   import { fade } from 'svelte/transition';
   import { base } from '$app/paths';
   import Editor from '../components/Editor.svelte';
+  import Loader from '../components/Loader.svelte';
 
   const PRODUCTION_MODE = process.env.NODE_ENV === 'production';
   // const PRODUCTION_MODE = true
@@ -31,8 +32,8 @@
     <Editor />
   </div>
 {:else}
-  <div id="loading-indicator" transition:fade={{delay: FADE_DELAY / 2}}>
-    ◒
+  <div transition:fade={{delay: FADE_DELAY / 2}}>
+    <Loader />
   </div>
 {/if}
 

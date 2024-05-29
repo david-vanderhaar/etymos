@@ -24,7 +24,7 @@
 </main>
 {#if pageFadeInReady}
   <footer transition:fade={{delay: FADE_DELAY}}>
-    <div class="italic">David Vanderhaar - {year}</div>
+    <div>David Vanderhaar - {year}</div>
   </footer>
 {/if}
 <style>
@@ -43,8 +43,8 @@
     color: var(--text-color);
   }
 
-  .italic {
-    font-style: italic;
+  footer > div {
+    margin-top: 40px;
   }
 
   header {

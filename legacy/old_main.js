@@ -5,7 +5,7 @@ import './style.css'
 import Quill from 'quill'
 import 'quill-autoformat'
 import tippy from 'tippy.js';
-import { STRONGS_DICTIONARY } from './src/lib/strongs-hebrew-dictionary.js'
+import { STRONGS_DICTIONARY } from '../src/lib/concordances/strongs/strongs-hebrew-dictionary.js'
 
   function handleClickEtymos() {
     // get element by id iframe-toggle
