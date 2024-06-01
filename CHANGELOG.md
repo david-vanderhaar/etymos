@@ -5,3 +5,4 @@
 - v0.0.2
   - add Box UI wrapped for quick styling.
   - add basic version of noun editor display (this is where user will interact with words na transform them).
+  - add noun highlight and select.
