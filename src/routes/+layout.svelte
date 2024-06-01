@@ -28,6 +28,9 @@
   </footer>
 {/if}
 <style>
+  @import 'quill/dist/quill.bubble.css';
+  @import 'tippy.js/themes/translucent.css';
+
   :root {
     --text-color: rgb(194 193 255);
     --background-color: #53568e;
