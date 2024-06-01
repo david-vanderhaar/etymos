@@ -1,0 +1,2 @@
+- 0.0.0: The original MVP was don in pure HTML, CSS, and JS. It will live on in a legacy branch for posterity.
+- 0.0.1: This is the first tracked version. We moved the code from plain JS to Svelte. This will make future changes easier to implement since the app is quite reactive and Svelte is a simple, easy to read framework.
