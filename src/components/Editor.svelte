@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import * as StrongsConcordance from '../lib/concordances/strongs/finder';
     import Box from "./Box.svelte";
+    import NounEditor from "./NounEditor.svelte";
   
   let editor;
   let quill;
@@ -55,17 +56,7 @@
   <div bind:this={editor} id="editor"/>
 </Box>
 <br />
-<Box>
-  {#each words as word}
-    {#if word === ' '}
-      &nbsp
-    {:else if word === '\n' || word === ' \n'}
-      <br>
-    {:else}
-      <span>{word}</span>
-    {/if}
-  {/each}
-</Box>
+<NounEditor words={words} />
 
 <style>
   #editor {

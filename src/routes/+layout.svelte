@@ -31,12 +31,11 @@
   @import 'quill/dist/quill.bubble.css';
   @import 'tippy.js/themes/translucent.css';
 
-  :root {
+  :global(:root) {
     --text-color: rgb(194 193 255);
     --background-color: #53568e;
     --highlight-color: rgb(142, 140, 236);
     --accent-color: rgb(255, 201, 53);
-    --iframe-display: none;
   }
 
   :global(html) {
