@@ -1,7 +1,7 @@
 {
   "name": "etymos",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,9 +14,13 @@
     "vite": "^5.2.0"
   },
   "dependencies": {
+    "@fontsource-variable/cormorant": "^5.0.9",
+    "@sveltejs/adapter-static": "^2.0.2",
+    "@sveltejs/kit": "^1.18.0",
     "gh-pages": "^6.1.1",
     "quill": "2.0.2",
     "quill-autoformat": "^0.1.2",
+    "svelte": "^3.59.1",
     "tippy.js": "^6.3.7"
   }
 }
