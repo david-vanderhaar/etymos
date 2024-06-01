@@ -52,11 +52,11 @@
   
 </script>
 
+<NounEditor words={words} />
+<br />
 <Box>
   <div bind:this={editor} id="editor"/>
 </Box>
-<br />
-<NounEditor words={words} />
 
 <style>
   #editor {
