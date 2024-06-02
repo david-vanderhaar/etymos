@@ -4,7 +4,7 @@
   export let words = []
   
   let activeNouns = new Set()
-  let selectedNounIndexes = []
+  let selectedNouns = new Set()
 
   function addActiveNoun(noun) {
     activeNouns.add(noun)
@@ -14,6 +14,14 @@
   function removeActiveNoun(noun) {
     activeNouns.delete(noun)
     domUpdateHack()
+  }
+
+  function addSelectedNoun(noun) {
+    selectedNouns.add(noun)
+  }
+  
+  function removeSelectedNoun(noun) {
+    selectedNouns.delete(noun)
   }
 
   // TODO: figure out how to
@@ -26,25 +34,35 @@
     return activeNouns.has(noun)
   }
 
-  function toggleSelectNounIndexes(noun, index) {
-    if (selectedNounIndexes.includes(index)) {
-      selectedNounIndexes = selectedNounIndexes.filter((item) => item != index)
+  function toggleSelectNoun(noun) {
+    if (nounIsSelected(noun)) {
+      // remove selected noun
+      removeSelectedNoun(noun)
     } else {
-      selectedNounIndexes = [...selectedNounIndexes, index]
+      // add selected noun
+      addSelectedNoun(noun)
     }
     domUpdateHack()
   }
 
-  function nounIsSelected(index) {
-    return selectedNounIndexes.includes(index)
+  function nounIsSelected(noun) {
+    return selectedNouns.has(noun)
   }
 
-  $: nouns = words.map((word, index) => ({ word, related: nounIsRelatedTo(word), selected: nounIsSelected(index)}))
+  $: nouns = transformWordsToNouns(words)
+
+  function transformWordsToNouns(wordItems) {
+    return wordItems.map((word) => createNounObject(word))
+  }
+
+  function createNounObject(word) {
+    return { word, related: nounIsRelatedTo(word), selected: nounIsSelected(word)}
+  }
 </script>
 
 <Box>
   <div id="noun-editor">
-    {#each nouns as noun, index}
+    {#each nouns as noun}
       {#if noun.word === ' '}
         &nbsp
       {:else if noun.word === '\n' || noun.word === ' \n'}
@@ -56,7 +74,7 @@
           class:noun__selected={noun.selected}
           on:pointerenter={() => addActiveNoun(noun.word)}
           on:pointerleave={() => removeActiveNoun(noun.word)}
-          on:pointerdown={() => toggleSelectNounIndexes(noun.word, index)}
+          on:pointerdown={() => toggleSelectNoun(noun.word)}
         >
           {noun.word}
         </span>
