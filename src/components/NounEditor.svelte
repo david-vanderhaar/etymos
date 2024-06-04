@@ -1,5 +1,6 @@
 <script>
   import Box from "./Box.svelte";
+    import NounToolbar from "./NounToolbar.svelte";
 
   export let words = []
   
@@ -60,28 +61,31 @@
   }
 </script>
 
-<Box>
-  <div id="noun-editor">
-    {#each nouns as noun}
-      {#if noun.word === ' '}
-        &nbsp
-      {:else if noun.word === '\n' || noun.word === ' \n'}
-        <br>
-      {:else}
-        <span 
-          class="noun"
-          class:noun__related={noun.related}
-          class:noun__selected={noun.selected}
-          on:pointerenter={() => addActiveNoun(noun.word)}
-          on:pointerleave={() => removeActiveNoun(noun.word)}
-          on:pointerdown={() => toggleSelectNoun(noun.word)}
-        >
-          {noun.word}
-        </span>
-      {/if}
-    {/each}
-  </div>
-</Box>
+<div style="display: flex; width: 692px;">
+  <Box style="flex: 1; margin-right: 26px;">
+    <div id="noun-editor">
+      {#each nouns as noun}
+        {#if noun.word === ' '}
+          &nbsp
+        {:else if noun.word === '\n' || noun.word === ' \n'}
+          <br>
+        {:else}
+          <span 
+            class="noun"
+            class:noun__related={noun.related}
+            class:noun__selected={noun.selected}
+            on:pointerenter={() => addActiveNoun(noun.word)}
+            on:pointerleave={() => removeActiveNoun(noun.word)}
+            on:pointerdown={() => toggleSelectNoun(noun.word)}
+          >
+            {noun.word}
+          </span>
+        {/if}
+      {/each}
+    </div>
+  </Box>
+  <NounToolbar />
+</div>
 
 <style>
   #noun-editor {

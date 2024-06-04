@@ -54,13 +54,11 @@
 
 <NounEditor words={words} />
 <br />
-<Box>
-  <div bind:this={editor} id="editor"/>
-</Box>
+<Box><div bind:this={editor} id="editor"/></Box>
 
 <style>
   #editor {
-    height: 400px;
+    /* height: 400px; */
   }
 
   :global(.ql-editor) {
