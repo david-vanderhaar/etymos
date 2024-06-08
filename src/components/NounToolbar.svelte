@@ -1,16 +1,15 @@
 <script>
-  import ChevronCircleUp from 'svelte-icons/fa/FaChevronCircleUp.svelte';
+  export let tools = []
 </script>
 
 <div id="noun-toolbar">
-  <button><div class="icon"><ChevronCircleUp /></div></button>
-  <button><div class="icon"><ChevronCircleUp /></div></button>
-  <button><div class="icon"><ChevronCircleUp /></div></button>
-  <button><div class="icon"><ChevronCircleUp /></div></button>
-  <button><div class="icon"><ChevronCircleUp /></div></button>
-  <button><div class="icon"><ChevronCircleUp /></div></button>
-  <button><div class="icon"><ChevronCircleUp /></div></button>
-  <button><div class="icon"><ChevronCircleUp /></div></button>
+  {#each tools as tool}
+    <button title="{tool.text}" on:click={tool.action}>
+      <div class="icon">
+        <svelte:component this={tool.icon} />
+      </div>
+    </button>
+  {/each}
 </div>
 
 <style>
@@ -27,6 +26,7 @@
     /* background-color: var(--highlight-color); */
     background-color: var(--background-color);
     color: var(--text-color);
+    /* border: 2px solid var(--highlight-color); */
     border: none;
     border-radius: 5px;
     padding: 4px;

@@ -1,11 +1,80 @@
 <script>
+  import MdExposurePlus1 from 'svelte-icons/md/MdExposurePlus1.svelte'
+  import MdSwapCalls from 'svelte-icons/md/MdSwapCalls.svelte'
+  import MdCallSplit from 'svelte-icons/md/MdCallSplit.svelte'
+  import MdTonality from 'svelte-icons/md/MdTonality.svelte'
   import Box from "./Box.svelte";
-    import NounToolbar from "./NounToolbar.svelte";
+  import NounToolbar from "./NounToolbar.svelte";
+  import TranslationHistory from './TranslationHistory.svelte';
 
   export let words = []
+  let translations = []
   
   let activeNouns = new Set()
   let selectedNouns = new Set()
+
+  const tools = [
+    {
+      icon: MdExposurePlus1,
+      text: 'N + 1',
+      type: 'n_plus_1',
+      action: () => {
+        selectedNouns.forEach((noun) => {
+          const translated = noun + '.'
+          addTranslation({noun, translated, type: 'n_plus_1'})
+        })
+      },
+    },
+    {
+      icon: MdSwapCalls,
+      text: 'Translate Traversal',
+      type: 'translate_traversal',
+      action: () => {
+        selectedNouns.forEach((noun) => {
+          const translated = noun + '-'
+          addTranslation({noun, translated, type: 'translate_traversal'})
+        })
+      },
+    },
+    {
+      icon: MdCallSplit,
+      text: 'Etymology Traversal',
+      type: 'etymology_traversal',
+      action: () => {
+        selectedNouns.forEach((noun) => {
+          const translated = noun + '~'
+          addTranslation({noun, translated, type: 'etymology_traversal'})
+        })
+      },
+    },
+    {
+      icon: MdTonality,
+      text: 'Definition Swap',
+      type: 'definition_swap',
+      action: () => {
+        selectedNouns.forEach((noun) => {
+          const translated = noun + '#'
+          addTranslation({noun, translated, type: 'definition_swap'})
+        })
+      },
+    },
+  ]
+
+  function addTranslation({noun, translated, type}) {
+    translations = [...translations, {noun, translated, type}]
+
+    selectedNouns.clear()
+    activeNouns.clear()
+
+    domUpdateHack()
+  }
+
+  function translateWord(word) {
+    const translation = translations.find((t) => t.noun === word)
+    return translation
+      ? translateWord(translation.translated)
+      : word
+  }
 
   function addActiveNoun(noun) {
     activeNouns.add(noun)
@@ -56,6 +125,9 @@
     return wordItems.map((word) => createNounObject(word))
   }
 
+  $: translatedWords = words.map(translateWord)
+  $: translatedNouns = transformWordsToNouns(translatedWords)
+
   function createNounObject(word) {
     return { word, related: nounIsRelatedTo(word), selected: nounIsSelected(word)}
   }
@@ -64,7 +136,7 @@
 <div style="display: flex; width: 692px;">
   <Box style="flex: 1; margin-right: 26px;">
     <div id="noun-editor">
-      {#each nouns as noun}
+      {#each translatedNouns as noun}
         {#if noun.word === ' '}
           &nbsp
         {:else if noun.word === '\n' || noun.word === ' \n'}
@@ -84,7 +156,8 @@
       {/each}
     </div>
   </Box>
-  <NounToolbar />
+  <NounToolbar {tools} />
+  <TranslationHistory {translations} />
 </div>
 
 <style>
