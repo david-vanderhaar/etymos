@@ -1,4 +1,5 @@
 <script>
+  import datamuse from '../lib/datamuse.js';
   import MdExposurePlus1 from 'svelte-icons/md/MdExposurePlus1.svelte'
   import MdSwapCalls from 'svelte-icons/md/MdSwapCalls.svelte'
   import MdCallSplit from 'svelte-icons/md/MdCallSplit.svelte'
@@ -18,9 +19,12 @@
       icon: MdExposurePlus1,
       text: 'N + 1',
       type: 'n_plus_1',
-      action: () => {
-        selectedNouns.forEach((noun) => {
-          const translated = noun + '.'
+      action: async () => {
+        selectedNouns.forEach(async (noun) => {
+          const result = await datamuse.words({rel_syn: noun})
+          if (!result.length) return console.log('No synonyms found for', noun)
+          console.log('result', result);
+          const translated = result[0].word
           addTranslation({noun, translated, type: 'n_plus_1'})
         })
       },
@@ -70,9 +74,25 @@
   }
 
   function translateWord(word) {
+    return chainTranslateWord(word)
+  }
+
+  function chainTranslateWord(word) {
+    translations.forEach((translation) => {
+      if (translation.noun === word) {
+        word = translation.translated
+      }
+    })
+
+    return word
+  }
+
+  function recursiveTranslateWord(word, limit = 10) {
+    if (limit <= 0) return word;
+
     const translation = translations.find((t) => t.noun === word)
     return translation
-      ? translateWord(translation.translated)
+      ? recursiveTranslateWord(translation.translated, limit - 1)
       : word
   }
 
