@@ -1,8 +1,12 @@
 <script>
   import { onMount } from "svelte";
   import * as StrongsConcordance from '../lib/concordances/strongs/finder';
+    import Box from "./Box.svelte";
+    import NounEditor from "./NounEditor.svelte";
   
   let editor;
+  let quill;
+  let words = []
 	
   onMount(async () => {
 		const { default: Quill } = await import("quill");
@@ -24,7 +28,7 @@
       handlers: {clean: cleanFormatHandler}
     }
 	
-    const quill = new Quill(editor, {
+    quill = new Quill(editor, {
       modules: {
         toolbar: toolbarOptions
       },
@@ -32,26 +36,32 @@
     });
 
     quill.focus();
+    quill.on('text-change', () => words = getText())
   });
 
   // example of finder code
   console.log(StrongsConcordance.findReplacements_v3('David'))
+
+  function getText() {
+    if (!quill) return []
+    const regex = /([^\s\n]+)|(\s)|(\n)/g;
+    const text = quill.getText(0).split(regex).filter(Boolean);
+
+    return text
+  }
+  
 </script>
 
-<div bind:this={editor} class="box" id="editor"></div>
+<NounEditor words={words} />
+<br />
+<Box><div bind:this={editor} id="editor"/></Box>
 
 <style>
-  @import 'quill/dist/quill.bubble.css';
-  @import 'tippy.js/themes/translucent.css';
-
   #editor {
-    height: 400px;
+    /* height: 400px; */
   }
 
-  .box {
-    max-width: 600px;
-    border: 2px solid var(--highlight-color);
-    border-radius: 10px;
-    margin: auto;
+  :global(.ql-editor) {
+    padding: 0 !important;
   }
 </style>

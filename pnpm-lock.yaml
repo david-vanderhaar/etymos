@@ -22,6 +22,9 @@ dependencies:
   svelte:
     specifier: ^3.59.1
     version: 3.59.1
+  svelte-icons:
+    specifier: ^2.1.0
+    version: 2.1.0
   tippy.js:
     specifier: ^6.3.7
     version: 6.3.7
@@ -913,6 +916,10 @@ packages:
       svelte: ^3.19.0 || ^4.0.0
     dependencies:
       svelte: 3.59.1
+    dev: false
+
+  /svelte-icons@2.1.0:
+    resolution: {integrity: sha512-rHPQjweEc9fGSnvM0/4gA3pDHwyZyYsC5KhttCZRhSMJfLttJST5Uq0B16Czhw+HQ+HbSOk8kLigMlPs7gZtfg==}
     dev: false
 
   /svelte@3.59.1:
