@@ -8,4 +8,5 @@
   - add noun highlight and select.
   - a basic version of creating and visualizing translations
 - v0.0.3
-  - add async local storage class to handle caching (pulled from a vlass I wrote for po33_and_me)
+  - add async local storage class to handle caching (pulled from a class I wrote for rune tablet)
+  - cache api call response
