@@ -1,3 +1,4 @@
-import { AsyncStorageFactory } from "./AsyncStorageFactory"
+import { createPersistentStore } from './PersistentStore'
 
-export const TranslationStorage = AsyncStorageFactory('etymos_web_translations')
+export const translationStore = createPersistentStore('translations', [])
+export const apiResponseStore = createPersistentStore('apiResponse', [])

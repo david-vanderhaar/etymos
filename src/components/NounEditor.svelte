@@ -7,9 +7,9 @@
   import Box from "./Box.svelte";
   import NounToolbar from "./NounToolbar.svelte";
   import TranslationHistory from './TranslationHistory.svelte';
+  import { translationStore } from '../lib/data_stores/Stores.js';
 
   export let words = []
-  let translations = []
   
   let activeNouns = new Set()
   let selectedNouns = new Set()
@@ -21,9 +21,18 @@
       type: 'n_plus_1',
       action: async () => {
         selectedNouns.forEach(async (noun) => {
+          // look for translation in local storage first using noun and type
+          // if not found, fetch from datamuse and store in local storage
+          // if found, add that translation
+
+          const translation = $translationStore.find((t) => t.noun === noun && t.type === 'n_plus_1')
+          if (translation) {
+            addTranslation(translation)
+            return
+          }
+
           const result = await datamuse.words({rel_syn: noun})
           if (!result.length) return console.log('No synonyms found for', noun)
-          console.log('result', result);
           const translated = result[0].word
           addTranslation({noun, translated, type: 'n_plus_1'})
         })
@@ -65,7 +74,7 @@
   ]
 
   function addTranslation({noun, translated, type}) {
-    translations = [...translations, {noun, translated, type}]
+    translationStore.add({noun, translated, type})
 
     selectedNouns.clear()
     activeNouns.clear()
@@ -78,7 +87,7 @@
   }
 
   function chainTranslateWord(word) {
-    translations.forEach((translation) => {
+    $translationStore.forEach((translation) => {
       if (translation.noun === word) {
         word = translation.translated
       }
@@ -90,7 +99,7 @@
   function recursiveTranslateWord(word, limit = 10) {
     if (limit <= 0) return word;
 
-    const translation = translations.find((t) => t.noun === word)
+    const translation = $translationStore.find((t) => t.noun === word)
     return translation
       ? recursiveTranslateWord(translation.translated, limit - 1)
       : word
@@ -139,8 +148,6 @@
     return selectedNouns.has(noun)
   }
 
-  $: nouns = transformWordsToNouns(words)
-
   function transformWordsToNouns(wordItems) {
     return wordItems.map((word) => createNounObject(word))
   }
@@ -150,6 +157,11 @@
 
   function createNounObject(word) {
     return { word, related: nounIsRelatedTo(word), selected: nounIsSelected(word)}
+  }
+
+  function deleteTranslation(uuid) {
+    translationStore.delete(uuid)
+    domUpdateHack()
   }
 </script>
 
@@ -177,7 +189,7 @@
     </div>
   </Box>
   <NounToolbar {tools} />
-  <TranslationHistory {translations} />
+  <TranslationHistory translations={$translationStore} deleteTranslation={deleteTranslation} />
 </div>
 
 <style>
