@@ -6,3 +6,4 @@
   - add Box UI wrapped for quick styling.
   - add basic version of noun editor display (this is where user will interact with words na transform them).
   - add noun highlight and select.
+  - a basic version of creating and visualizing translations
