@@ -16,21 +16,10 @@
 
   const tools = [
     {
-      icon: MdExposurePlus1,
       text: 'N + 1',
       type: 'n_plus_1',
       action: async () => {
         selectedNouns.forEach(async (noun) => {
-          // look for translation in local storage first using noun and type
-          // if not found, fetch from datamuse and store in local storage
-          // if found, add that translation
-
-          const translation = $translationStore.find((t) => t.noun === noun && t.type === 'n_plus_1')
-          if (translation) {
-            addTranslation(translation)
-            return
-          }
-
           const result = await datamuse.words({rel_syn: noun})
           if (!result.length) return console.log('No synonyms found for', noun)
           const translated = result[0].word
@@ -39,7 +28,6 @@
       },
     },
     {
-      icon: MdSwapCalls,
       text: 'Translate Traversal',
       type: 'translate_traversal',
       action: () => {
@@ -50,7 +38,6 @@
       },
     },
     {
-      icon: MdCallSplit,
       text: 'Etymology Traversal',
       type: 'etymology_traversal',
       action: () => {
@@ -61,7 +48,6 @@
       },
     },
     {
-      icon: MdTonality,
       text: 'Definition Swap',
       type: 'definition_swap',
       action: () => {

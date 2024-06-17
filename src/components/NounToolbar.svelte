@@ -1,4 +1,6 @@
 <script>
+  import { getToolIcon } from "$lib/tools";
+
   export let tools = []
 </script>
 
@@ -6,7 +8,7 @@
   {#each tools as tool}
     <button title="{tool.text}" on:click={tool.action}>
       <div class="icon">
-        <svelte:component this={tool.icon} />
+        <svelte:component this={getToolIcon(tool.type)} />
       </div>
     </button>
   {/each}
@@ -16,7 +18,6 @@
   #noun-toolbar {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     padding: 12px 15px;
     border: 2px solid var(--highlight-color);
     border-radius: 10px;
