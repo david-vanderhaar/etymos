@@ -1,18 +1,73 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="./favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Etymos</title>
-    <script type="module" crossorigin src="./assets/index-C96x5eE4.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-B9wBDTeL.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="content-security-policy" content="">
+		<link href="./_app/immutable/assets/0.BOe5ks5G.css" rel="stylesheet">
+		<link href="./_app/immutable/assets/2.KUS_Tu4I.css" rel="stylesheet">
+		<link rel="modulepreload" href="./_app/immutable/entry/start.PiDcplXA.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/index.mn5eRdav.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.D1s8QtDO.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/paths.zkEwy-rK.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/app.BJs7UkTC.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/preload-helper.D6kgxu3v.js">
+		<link rel="modulepreload" href="./_app/immutable/nodes/0.Gphc4jv6.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/2.DTtnnWzC.js">
+		<link rel="modulepreload" href="./_app/immutable/nodes/2.5MczFyn3.js"><title>Etymos</title><!-- HEAD_svelte-zezkcw_START --><meta name="description" content="a simple text editor, inspired by the mundanity of names and places"><link rel="icon" href="/etymos/favicon/favicon.ico"><!-- HEAD_svelte-zezkcw_END -->
   </head>
   <body>
-    <div id="app">
-      <h1 class="title">Etym<span id="iframe-toggle" class="highlight-text">o</span>s</h1>
-      <p class="subtitle highlight-text">a simple text editor, inspired by the mundanity of names and places.</p>
-      <div class="box" id="editor"></div>
-    </div>
+    <div>
+
+
+
+
+<header class="svelte-1all8s9"><h1 class="title svelte-1all8s9">Etym<span id="iframe-toggle" class="highlight-text svelte-1all8s9">o</span>s</h1>
+  <p class="subtitle highlight-text svelte-1all8s9">a simple text editor, inspired by the mundanity of names and places.</p></header>
+<main><div><div id="loading-indicator" class="svelte-79h2j4">◒
+</div></div></main>
+
+
+
+			
+			<script>
+				{
+					__sveltekit_1rtc4ac = {
+						assets: "/etymos",
+						base: new URL(".", location).pathname.slice(0, -1),
+						env: {}
+					};
+
+					const element = document.currentScript.parentElement;
+
+					const data = [null,null];
+
+					Promise.all([
+						import("./_app/immutable/entry/start.PiDcplXA.js"),
+						import("./_app/immutable/entry/app.BJs7UkTC.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element, {
+							node_ids: [0, 2],
+							data,
+							form: null,
+							error: null
+						});
+					});
+				}
+			</script>
+		</div>
   </body>
+  <style>
+    :root {
+      --text-color: rgb(194 193 255);
+      --background-color: #53568e;
+      --highlight-color: rgb(142, 140, 236);
+      --accent-color: rgb(255, 201, 53);
+    }
+    html {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      transition: all 0.5s ease;
+    }
+  </style>
 </html>
