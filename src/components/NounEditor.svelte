@@ -16,44 +16,50 @@
 
   const tools = [
     {
-      text: 'N + 1',
-      type: 'n_plus_1',
+      text: 'Synonym',
+      type: 'synonym',
       action: async () => {
         selectedNouns.forEach(async (noun) => {
           const result = await datamuse.words({rel_syn: noun})
           if (!result.length) return console.log('No synonyms found for', noun)
           const translated = result[0].word
-          addTranslation({noun, translated, type: 'n_plus_1'})
+          addTranslation({noun, translated, type: 'synonym'})
         })
       },
     },
     {
-      text: 'Translate Traversal',
-      type: 'translate_traversal',
+      text: 'Antonym',
+      type: 'antonym',
       action: () => {
-        selectedNouns.forEach((noun) => {
-          const translated = noun + '-'
-          addTranslation({noun, translated, type: 'translate_traversal'})
+        selectedNouns.forEach(async (noun) => {
+          const result = await datamuse.words({rel_ant: noun})
+          if (!result.length) return console.log('No antonyms found for', noun)
+          const translated = result[0].word
+          addTranslation({noun, translated, type: 'antonym'})
         })
       },
     },
     {
-      text: 'Etymology Traversal',
-      type: 'etymology_traversal',
+      text: 'Generalization',
+      type: 'generalization',
       action: () => {
-        selectedNouns.forEach((noun) => {
-          const translated = noun + '~'
-          addTranslation({noun, translated, type: 'etymology_traversal'})
+        selectedNouns.forEach(async (noun) => {
+          const result = await datamuse.words({rel_spc: noun})
+          if (!result.length) return console.log('No generalization found for', noun)
+          const translated = result[0].word
+          addTranslation({noun, translated, type: 'generalization'})
         })
       },
     },
     {
-      text: 'Definition Swap',
-      type: 'definition_swap',
+      text: 'Reverse Definition',
+      type: 'reverse_definition',
       action: () => {
-        selectedNouns.forEach((noun) => {
-          const translated = noun + '#'
-          addTranslation({noun, translated, type: 'definition_swap'})
+        selectedNouns.forEach(async (noun) => {
+          const result = await datamuse.words({ml: noun})
+          if (!result.length) return console.log('No reverse definition found for', noun)
+          const translated = result[0].word
+          addTranslation({noun, translated, type: 'reverse_definition'})
         })
       },
     },

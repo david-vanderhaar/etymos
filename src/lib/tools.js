@@ -4,10 +4,10 @@ import MdCallSplit from 'svelte-icons/md/MdCallSplit.svelte'
 import MdTonality from 'svelte-icons/md/MdTonality.svelte'
 
 const toolIconMap = {
-  'n_plus_1': MdExposurePlus1,
-  'translate_traversal': MdSwapCalls,
-  'etymology_traversal': MdCallSplit,
-  'definition_swap': MdTonality,
+  'synonym': MdExposurePlus1,
+  'antonym': MdSwapCalls,
+  'generalization': MdCallSplit,
+  'reverse_definition': MdTonality,
 }
 
 export function getToolIcon(toolType) {
