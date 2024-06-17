@@ -8,7 +8,7 @@
     "build": "vite build",
     "publish": "pnpm run build && pnpm run deploy",
     "preview": "pnpm run build && vite preview",
-    "deploy": "touch dist/.nojekyll && gh-pages -d dist -t true"
+    "deploy": "touch build/.nojekyll && gh-pages -d build -t true"
   },
   "devDependencies": {
     "vite": "^5.2.0"

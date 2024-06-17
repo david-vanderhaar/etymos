@@ -9,6 +9,8 @@ lerna-debug.log*
 
 dist
 dist/*
+build
+build/*
 node_modules
 node_modules/*
 *.local
