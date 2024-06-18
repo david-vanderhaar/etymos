@@ -44,6 +44,7 @@
       type: 'generalization',
       action: () => {
         selectedNouns.forEach(async (noun) => {
+          // kind of (direct hypernyms)
           const result = await datamuse.words({rel_spc: noun})
           if (!result.length) return console.log('No generalization found for', noun)
           const translated = result[0].word
@@ -56,10 +57,74 @@
       type: 'reverse_definition',
       action: () => {
         selectedNouns.forEach(async (noun) => {
+          // means like 
           const result = await datamuse.words({ml: noun})
           if (!result.length) return console.log('No reverse definition found for', noun)
           const translated = result[0].word
           addTranslation({noun, translated, type: 'reverse_definition'})
+        })
+      },
+    },
+    {
+      text: 'More Specific',
+      type: 'more_specific',
+      action: () => {
+        selectedNouns.forEach(async (noun) => {
+          // more specific (direct hyponyms)
+          const result = await datamuse.words({gen: noun})
+          if (!result.length) return console.log('No more specifics found for', noun)
+          const translated = result[0].word
+          addTranslation({noun, translated, type: 'more_specific'})
+        })
+      },
+    },
+    {
+      text: 'Comprised Of',
+      type: 'comprised_of',
+      action: () => {
+        selectedNouns.forEach(async (noun) => {
+          // direct holonyms
+          const result = await datamuse.words({com: noun})
+          if (!result.length) return console.log('No comprised ofs found for', noun)
+          const translated = result[0].word
+          addTranslation({noun, translated, type: 'comprised_of',})
+        })
+      },
+    },
+    {
+      text: 'Part Of',
+      type: 'part_of',
+      action: () => {
+        selectedNouns.forEach(async (noun) => {
+          // direct meronyms
+          const result = await datamuse.words({par: noun})
+          if (!result.length) return console.log('No parts of found for', noun)
+          const translated = result[0].word
+          addTranslation({noun, translated, type: 'part_of',})
+        })
+      },
+    },
+    {
+      text: 'Homophone',
+      type: 'homophone',
+      action: () => {
+        selectedNouns.forEach(async (noun) => {
+          const result = await datamuse.words({hom: noun})
+          if (!result.length) return console.log('No homophones found for', noun)
+          const translated = result[0].word
+          addTranslation({noun, translated, type: 'homophone',})
+        })
+      },
+    },
+    {
+      text: 'Consonant Match',
+      type: 'consonant_match',
+      action: () => {
+        selectedNouns.forEach(async (noun) => {
+          const result = await datamuse.words({cns: noun})
+          if (!result.length) return console.log('No consonant matches found for', noun)
+          const translated = result[0].word
+          addTranslation({noun, translated, type: 'consonant_match',})
         })
       },
     },
