@@ -57,7 +57,7 @@
   #noun-toolbar button:disabled {
     background-color: var(--highlight-color);
     color: var(--background-color);
-    cursor: not-allowed;
+    cursor: wait;
   }
 
   .icon {

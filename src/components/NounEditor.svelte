@@ -10,168 +10,75 @@
   let activeNouns = new Set()
   let selectedNouns = new Set()
 
+  async function datamuseToolAction (datamuseApiSubject, type) {
+    const promises = Array.from(selectedNouns).map(async (noun) => {
+      const result = await datamuse.words({[datamuseApiSubject]: noun});
+      if (!result.length) {
+        console.log(`No ${type} results found for`, noun);
+        return null;
+      }
+
+      const translated = result[0].word;
+      addTranslation({noun, translated, type});
+    });
+
+    await Promise.all(promises);
+  }
+
   const tools = [
     {
       text: 'Synonym',
       type: 'synonym',
       loading: false,
-      action: async () => {
-        const promises = Array.from(selectedNouns).map(async (noun) => {
-          const result = await datamuse.words({rel_syn: noun});
-          if (!result.length) {
-            console.log('No synonyms found for', noun);
-            return null;
-          }
-          const translated = result[0].word;
-          addTranslation({noun, translated, type: 'synonym'});
-        });
-
-        await Promise.all(promises);
-      },
+      action: async () => await datamuseToolAction('rel_syn', 'synonym'),
     },
     {
       text: 'Antonym',
       type: 'antonym',
       loading: false,
-      action: async () => {
-        const promises = Array.from(selectedNouns).map(async (noun) => {
-          const result = await datamuse.words({rel_ant: noun})
-          if (!result.length) {
-            console.log('No antonyms found for', noun)
-            return null;
-          }
-          const translated = result[0].word;
-          addTranslation({noun, translated, type: 'antonym'})
-        });
-
-        await Promise.all(promises);
-      },
+      action: async () => await datamuseToolAction('rel_ant', 'antonym'),
     },
     {
       text: 'Generalization',
       type: 'generalization',
       loading: false,
-      action: async () => {
-        const promises = Array.from(selectedNouns).map(async (noun) => {
-          const result = await datamuse.words({rel_spc: noun})
-          if (!result.length) {
-            console.log('No generalization found for', noun)
-            return null;
-          }
-          const translated = result[0].word;
-          addTranslation({noun, translated, type: 'generalization'})
-        });
-
-        await Promise.all(promises);
-      },
+      action: async () => await datamuseToolAction('rel_spc', 'generalization'),
     },
     {
       text: 'Reverse Definition',
       type: 'reverse_definition',
       loading: false,
-      action: async () => {
-        const promises = Array.from(selectedNouns).map(async (noun) => {
-          const result = await datamuse.words({ml: noun})
-          if (!result.length) {
-            console.log('No reverse definition found for', noun)
-            return null;
-          }
-          const translated = result[0].word;
-          addTranslation({noun, translated, type: 'reverse_definition'})
-        });
-
-        await Promise.all(promises);
-      },
+      action: async () => await datamuseToolAction('ml', 'reverse_definition'),
     },
     {
       text: 'More Specific',
       type: 'more_specific',
       loading: false,
-      action: async () => {
-        const promises = Array.from(selectedNouns).map(async (noun) => {
-          const result = await datamuse.words({gen: noun})
-          if (!result.length) {
-            console.log('No more specifics found for', noun)
-            return null;
-          }
-          const translated = result[0].word;
-          addTranslation({noun, translated, type: 'more_specific'})
-        });
-
-        await Promise.all(promises);
-      },
+      action: async () => await datamuseToolAction('gen', 'more_specific'),
     },
     {
       text: 'Comprised Of',
       type: 'comprised_of',
       loading: false,
-      action: async () => {
-        const promises = Array.from(selectedNouns).map(async (noun) => {
-          const result = await datamuse.words({com: noun})
-          if (!result.length) {
-            console.log('No comprised ofs found for', noun)
-            return null;
-          }
-          const translated = result[0].word;
-          addTranslation({noun, translated, type: 'comprised_of',})
-        });
-
-        await Promise.all(promises);
-      },
+      action: async () => await datamuseToolAction('com', 'comprised_of'),
     },
     {
       text: 'Part Of',
       type: 'part_of',
       loading: false,
-      action: async () => {
-        const promises = Array.from(selectedNouns).map(async (noun) => {
-          const result = await datamuse.words({par: noun})
-          if (!result.length) {
-            console.log('No parts of found for', noun)
-            return null;
-          }
-          const translated = result[0].word;
-          addTranslation({noun, translated, type: 'part_of',})
-        });
-
-        await Promise.all(promises);
-      },
+      action: async () => await datamuseToolAction('par', 'part_of'),
     },
     {
       text: 'Homophone',
       type: 'homophone',
       loading: false,
-      action: async () => {
-        const promises = Array.from(selectedNouns).map(async (noun) => {
-          const result = await datamuse.words({hom: noun})
-          if (!result.length) {
-            console.log('No homophones found for', noun)
-            return null;
-          }
-          const translated = result[0].word;
-          addTranslation({noun, translated, type: 'homophone',})
-        });
-
-        await Promise.all(promises);
-      },
+      action: async () => await datamuseToolAction('hom', 'homophone'),
     },
     {
       text: 'Consonant Match',
       type: 'consonant_match',
       loading: false,
-      action: async () => {
-        const promises = Array.from(selectedNouns).map(async (noun) => {
-          const result = await datamuse.words({cns: noun})
-          if (!result.length) {
-            console.log('No consonant matches found for', noun)
-            return null;
-          }
-          const translated = result[0].word;
-          addTranslation({noun, translated, type: 'consonant_match',})
-        });
-
-        await Promise.all(promises);
-      },
+      action: async () => await datamuseToolAction('cns', 'consonant_match'),
     },
   ]
 
