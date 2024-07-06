@@ -2,11 +2,24 @@
   import { getToolIcon } from "$lib/tools";
 
   export let tools = []
+
+  async function handleClickTool(tool) {
+    tool.loading = true
+    tools = [...tools]
+    await tool.action()
+    tool.loading = false
+    tools = [...tools]
+  }
 </script>
 
 <div id="noun-toolbar">
   {#each tools as tool}
-    <button title="{tool.text}" on:click={tool.action}>
+    <button 
+      title="{tool.text}"
+      on:click={() => handleClickTool(tool)}
+      disabled={tool.loading}
+      class:icon__loading={tool.loading}
+    >
       <div class="icon">
         <svelte:component this={getToolIcon(tool.type)} />
       </div>
@@ -41,8 +54,36 @@
     background-color: var(--highlight-color);
   }
 
+  #noun-toolbar button:disabled {
+    background-color: var(--highlight-color);
+    color: var(--background-color);
+    cursor: not-allowed;
+  }
+
   .icon {
     width: 24px;
     height: 24px;
+  }
+
+  .icon__loading {
+    animation: slow-shake 0.4s linear infinite;
+  }
+
+  @keyframes slow-shake {
+    0% {
+      transform: translateX(0px);
+    }
+    25% {
+      transform: translateX(-5px);
+    }
+    50% {
+      transform: translateX(0px);
+    }
+    75% {
+      transform: translateX(5px);
+    }
+    100% {
+      transform: translateX(0px);
+    }
   }
 </style>
