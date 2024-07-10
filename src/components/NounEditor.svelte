@@ -1,14 +1,17 @@
 <script>
   import datamuse from '../lib/datamuse.js';
+  import { uuid } from '../lib/helper.js';
   import Box from "./Box.svelte";
   import NounToolbar from "./NounToolbar.svelte";
   import TranslationHistory from './TranslationHistory.svelte';
+  import TranslationResults from './TranslationResults.svelte';
   import { translationStore } from '../lib/data_stores/Stores.js';
 
   export let words = []
   
   let activeNouns = new Set()
   let selectedNouns = new Set()
+  let translationResults = []
 
   async function datamuseToolAction (datamuseApiSubject, type) {
     const promises = Array.from(selectedNouns).map(async (noun) => {
@@ -18,8 +21,15 @@
         return null;
       }
 
-      const translated = result[0].word;
-      addTranslation({noun, translated, type});
+      translationResults = [
+        ...translationResults,
+        {
+          id: uuid(),
+          noun,
+          options: result.map((res) => res.word),
+          type,
+        }
+      ]
     });
 
     await Promise.all(promises);
@@ -81,6 +91,10 @@
       action: async () => await datamuseToolAction('cns', 'consonant_match'),
     },
   ]
+
+  function removeTranslationResult(id) {
+    translationResults = translationResults.filter((result) => result.id !== id)
+  }
 
   function addTranslation({noun, translated, type}) {
     translationStore.add({noun, translated, type})
@@ -168,8 +182,8 @@
     return { word, related: nounIsRelatedTo(word), selected: nounIsSelected(word)}
   }
 
-  function deleteTranslation(uuid) {
-    translationStore.delete(uuid)
+function deleteTranslation(uuid) {
+  translationStore.delete(uuid)
     domUpdateHack()
   }
 </script>
@@ -199,6 +213,11 @@
   </Box>
   <NounToolbar {tools} />
   <TranslationHistory translations={$translationStore} deleteTranslation={deleteTranslation} />
+  <TranslationResults 
+    translations={translationResults}
+    addTranslation={addTranslation}
+    removeTranslationResult={removeTranslationResult}
+  />
 </div>
 
 <style>
