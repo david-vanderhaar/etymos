@@ -5,6 +5,7 @@
   import { base } from '$app/paths';
   import Editor from '../components/Editor.svelte';
   import Loader from '../components/Loader.svelte';
+    import InputManager from '../components/InputManager.svelte';
 
   const PRODUCTION_MODE = process.env.NODE_ENV === 'production';
   // const PRODUCTION_MODE = true
@@ -31,6 +32,7 @@
   <div transition:fade={{delay: FADE_DELAY}} style="max-width: 600px; margin: auto;">
     <Editor />
   </div>
+  <InputManager />
 {:else}
   <div transition:fade={{delay: FADE_DELAY / 2}}>
     <Loader />

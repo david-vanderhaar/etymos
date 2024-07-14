@@ -10,3 +10,7 @@
 - v0.0.3
   - add async local storage class to handle caching (pulled from a class I wrote for rune tablet)
   - cache api call response
+  - add pop-ups for api calls that return multple responses
+  - add loading icon on cursor duriong api call
+- v0.0.4
+  - add input manager
