@@ -182,13 +182,13 @@
     return { word, related: nounIsRelatedTo(word), selected: nounIsSelected(word)}
   }
 
-function deleteTranslation(uuid) {
-  translationStore.delete(uuid)
+  function deleteTranslation(uuid) {
+    translationStore.delete(uuid)
     domUpdateHack()
   }
 </script>
 
-<div style="display: flex; width: 692px;">
+<div style="display: flex;">
   <Box style="flex: 1; margin-right: 26px;">
     <div id="noun-editor">
       {#each translatedNouns as noun}
@@ -204,6 +204,10 @@ function deleteTranslation(uuid) {
             on:pointerenter={() => addActiveNoun(noun.word)}
             on:pointerleave={() => removeActiveNoun(noun.word)}
             on:pointerdown={() => toggleSelectNoun(noun.word)}
+            on:focusin={() => addActiveNoun(noun.word)}
+            on:focusout={() => removeActiveNoun(noun.word)}
+            on:keydown={(e) => e.code === 'Space' && toggleSelectNoun(noun.word)}
+            tabindex="0"
           >
             {noun.word}
           </span>
@@ -246,5 +250,24 @@ function deleteTranslation(uuid) {
 
   .noun__related {
     border-bottom: 1px dotted var(--accent-color);
+  }
+
+  .noun:focus {
+    outline: none;
+    color: var(--accent-color);
+    animation: blink 1s infinite;
+  }
+
+  .noun__selected:focus {
+    color: var(--background-color);
+  }
+
+  @keyframes blink {
+    0%, 100% {
+      color: var(--background-color);
+    }
+    50% {
+      color: var(--accent-color);
+    }
   }
 </style>

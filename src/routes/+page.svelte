@@ -29,7 +29,7 @@
 </script>
 
 {#if mounted}
-  <div transition:fade={{delay: FADE_DELAY}} style="max-width: 600px; margin: auto;">
+  <div transition:fade={{delay: FADE_DELAY}} style="max-width: 800px; margin: auto;">
     <Editor />
   </div>
   <InputManager />

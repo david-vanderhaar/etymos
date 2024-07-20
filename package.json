@@ -18,6 +18,7 @@
     "@sveltejs/adapter-static": "^2.0.2",
     "@sveltejs/kit": "^1.18.0",
     "gh-pages": "^6.1.1",
+    "mitt": "^3.0.1",
     "quill": "2.0.2",
     "quill-autoformat": "^0.1.2",
     "svelte": "^3.59.1",

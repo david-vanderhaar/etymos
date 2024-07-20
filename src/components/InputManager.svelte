@@ -1,22 +1,20 @@
 <script>
-import { createEventDispatcher } from "svelte"
+import { GlobalEventBus } from "../lib/events";
 
 const currentKeys = new Set() 
-const dispatch = createEventDispatcher() 
 
 const keyComboToEvent = [
   {
-    keys: new Set(['alt', '1']),
-    events: ['activate_passage_editor']
+    keys: new Set(['control', '1']),
+    events: ['activate_noun_editor']
   },
   {
-    keys: new Set(['alt', '2']),
-    events: ['activate_passage_display']
+    keys: new Set(['control', '2']),
+    events: ['activate_quill_editor']
   },
 ]
 
 function handleKeyDown(event) {
-  console.log(event);
   // log key down
   currentKeys.add(event.key.toLowerCase())
 
@@ -26,7 +24,7 @@ function handleKeyDown(event) {
   })?.events || []
   
   // dispatch events
-  appEvents.forEach((appEvent) => dispatch(appEvent))
+  appEvents.forEach((appEvent) => GlobalEventBus.emit(appEvent))
 }
 
 function handleKeyUp(event) {
