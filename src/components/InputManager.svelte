@@ -4,6 +4,16 @@ import { GlobalEventBus } from "../lib/events";
 const currentKeys = new Set() 
 
 const keyComboToEvent = [
+  // alt: for window keyboard
+  {
+    keys: new Set(['alt', '1']),
+    events: ['activate_noun_editor']
+  },
+  {
+    keys: new Set(['alt', '2']),
+    events: ['activate_quill_editor']
+  },
+  // ctrl: for mac keyboard
   {
     keys: new Set(['control', '1']),
     events: ['activate_noun_editor']
@@ -23,6 +33,7 @@ function handleKeyDown(event) {
     return keys.difference(currentKeys).size === 0
   })?.events || []
   
+
   // dispatch events
   appEvents.forEach((appEvent) => GlobalEventBus.emit(appEvent))
 }

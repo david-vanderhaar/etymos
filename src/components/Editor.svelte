@@ -57,6 +57,16 @@
   GlobalEventBus.on('activate_noun_editor', () => {
     nounEditorActive = true
     quillEditorActive = false
+
+    // find first word and tab to it.
+    const nouns = document.getElementsByClassName('noun')
+    if (nouns.length > 0) {
+      nouns[0].focus()
+    } else {
+      // if no words, then tab to tools
+      const toolbar = document.getElementById('noun-toolbar')
+      toolbar.children[0].focus()
+    }
   })
 
   GlobalEventBus.on('activate_quill_editor', () => {
@@ -68,16 +78,22 @@
 </script>
 
 <div class="editor" class:editor--active={nounEditorActive}>
+  <sup>alt + 1</sup>
   <NounEditor words={words} />
 </div>
 <br />
 <div class="editor" class:editor--active={quillEditorActive}>
+  <sup>alt + 2</sup>
   <Box><div bind:this={editor} id="editor"/></Box>
 </div>
 
 <style>
   #editor {
     /* height: 400px; */
+  }
+
+  sup {
+    margin-top: 8px;
   }
 
   .editor {
