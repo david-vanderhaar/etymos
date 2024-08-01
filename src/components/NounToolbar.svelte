@@ -1,19 +1,37 @@
 <script>
-  import { getToolIcon } from "$lib/tools";
+  import { getToolIcon } from "../lib/tools";
+  import { GlobalEventBus } from "../lib/events";
+  import { onMount } from 'svelte';
 
   export let tools = []
 
   async function handleClickTool(tool) {
+    console.log('handle tool: ', tool);
     tool.loading = true
     tools = [...tools]
     await tool.action()
     tool.loading = false
     tools = [...tools]
   }
+
+  // only want this to happen once so we don't fire multiple global events
+  onMount(async () => {
+    Array(9).fill('').forEach(
+      (_, index) => {
+        GlobalEventBus.on(
+          `activate_tool_${index}`,
+          () => {
+            handleClickTool(tools.at(index))
+          }
+        )
+      }
+    )
+  })
 </script>
 
 <div id="noun-toolbar">
-  {#each tools as tool}
+  {#each tools as tool, index}
+    <sup>{index + 1}</sup>
     <button 
       title="{tool.text}"
       on:click={() => handleClickTool(tool)}
@@ -34,6 +52,11 @@
     padding: 12px 15px;
     border: 2px solid var(--highlight-color);
     border-radius: 10px;
+  }
+
+  #noun-toolbar sup {
+    position: relative;
+    top: 10px;
   }
 
   #noun-toolbar button {

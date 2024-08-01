@@ -22,6 +22,13 @@ const keyComboToEvent = [
     keys: new Set(['control', '2']),
     events: ['activate_quill_editor']
   },
+  // noun transform tools
+  ...Array(9).fill('').map((_, index) => {
+    return {
+      keys: new Set([`${index + 1}`]),
+      events: [`activate_tool_${index}`],
+    }
+  })
 ]
 
 function handleKeyDown(event) {
@@ -33,7 +40,7 @@ function handleKeyDown(event) {
     return keys.difference(currentKeys).size === 0
   })?.events || []
   
-
+  console.log(appEvents);
   // dispatch events
   appEvents.forEach((appEvent) => GlobalEventBus.emit(appEvent))
 }

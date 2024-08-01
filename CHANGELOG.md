@@ -14,3 +14,4 @@
   - add loading icon on cursor duriong api call
 - v0.0.4
   - add input manager
+  - add hotkeys for no-mouse usage
