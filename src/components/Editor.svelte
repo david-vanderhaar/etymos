@@ -38,6 +38,8 @@
 
     quill.focus();
     quill.on('text-change', () => words = getText())
+    quill.on('text-change', () => console.log('text change'))
+    quill.on('selection-change', () => console.log('selection change'))
   });
 
   // example of finder code
@@ -58,14 +60,17 @@
     nounEditorActive = true
     quillEditorActive = false
 
+    // unfocus quill if it's focused
+    if (quill.hasFocus()) quill.blur()
+
     // find first word and tab to it.
     const nouns = document.getElementsByClassName('noun')
     if (nouns.length > 0) {
       nouns[0].focus()
     } else {
       // if no words, then tab to tools
-      const toolbar = document.getElementById('noun-toolbar')
-      toolbar.children[0].focus()
+      const toolbarButtons = document.querySelectorAll('#noun-toolbar button')
+      toolbarButtons[0].focus()
     }
   })
 
@@ -73,7 +78,7 @@
     nounEditorActive = false
     quillEditorActive = true
 
-    quill.focus()
+    if (!quill.hasFocus()) quill.focus()
   })
 </script>
 

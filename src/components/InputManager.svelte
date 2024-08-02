@@ -22,6 +22,10 @@ const keyComboToEvent = [
     keys: new Set(['control', '2']),
     events: ['activate_quill_editor']
   },
+  {
+    keys: new Set(['escape']),
+    events: ['escape'],
+  },
   // noun transform tools
   ...Array(9).fill('').map((_, index) => {
     return {
@@ -32,6 +36,7 @@ const keyComboToEvent = [
 ]
 
 function handleKeyDown(event) {
+  console.log(event.key);
   // log key down
   currentKeys.add(event.key.toLowerCase())
 

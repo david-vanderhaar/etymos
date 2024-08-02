@@ -1,7 +1,7 @@
 <script>
   import Box from "./Box.svelte";
-  import { getToolIcon } from "../lib/tools.js"
-    import { fade } from "svelte/transition";
+  import { GlobalEventBus } from "../lib/events";
+
 
   export let translations = [];
   export let addTranslation;
@@ -12,11 +12,24 @@
     removeTranslationResult(translationResultId);
   }
 
+  GlobalEventBus.on('escape', () => {
+    translations.forEach((translation) => {
+      removeTranslationResult(translation.id)
+    })
+  })
+
 </script>
 
 <div id="noun-translation-results">
 {#each translations as translation}
   <Box style="margin: 8px; background-color: var(--text-color);">
+    <div 
+      class='translation--cancel'
+      on:pointerdown={() => removeTranslationResult(translation.id)}
+      style="cursor: pointer;"
+    >
+      <span>Esc</span>
+    </div>
     <div class="noun_translation_results">
       {#each translation.options as option}
         <div 
@@ -30,13 +43,6 @@
           <br>
         </div>
       {/each}
-      <div 
-        class='translation--cancel'
-        on:pointerdown={() => removeTranslationResult(translation.id)}
-        style="cursor: pointer;"
-      >
-        <span>cancel</span>
-      </div>
     </div>
   </Box>
 {/each}
@@ -65,13 +71,14 @@
   }
 
   .translation--cancel {
-    color: var(--background-color);
-    background-color: var(--highlight-color);
+    color: var(--text-color);
+    background-color: var(--background-color);
     border: 2px solid var(--background-color);
     border-radius: 5px;
-    padding: 4px;
+    /* padding: 4px; */
+    width: 44px;
     cursor: pointer;
-    margin: 26px 0 6px 0;
+    /* margin: 26px 0 6px 0; */
     transition: background-color 0.2s ease-in-out;
     text-align: center;
   }
