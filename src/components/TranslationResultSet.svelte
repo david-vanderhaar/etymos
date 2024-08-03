@@ -6,24 +6,39 @@
   export let addTranslation;
   export let removeTranslationResult;
 
-  onMount(() => {
-    focusFirstResult()
-  })
+  // onMount(() => {
+  //   focusFirstResult()
+  // })
 
-  function focusFirstResult() {
-    const buttons = document.querySelectorAll('.noun_translation_results > button.translation')
-    buttons[0].focus()
+  // function focusFirstResult() {
+  //   const buttons = document.querySelectorAll('.noun_translation_results > button.translation')
+  //   buttons[0].focus()
+  // }
+
+  function focusFirstResult(node) {
+    const buttons = node.querySelectorAll('.noun_translation_results > button.translation')
+    console.log(buttons);
+    
+    if (buttons.length) buttons[0].focus()
   }
 
   function handlePointerDown (translationResultId, noun, translated, type) {
     addTranslation({noun, translated, type});
     removeTranslationResult(translationResultId);
+  }
 
-    // focus on first result of any remainign result sets
-    focusFirstResult()
+  
+  function focusResultIfExists(node) {
+    focusFirstResult(node)
+    return  {
+      destroy() {
+        focusFirstResult(document)
+      }
+    }
   }
 </script>
 
+<div use:focusResultIfExists >
 <Box style="margin: 8px; background-color: var(--text-color);">
   <div 
     class='translation--cancel'
@@ -47,7 +62,7 @@
     {/each}
   </div>
 </Box>
-
+</div>
 <style>
   .noun_translation_results .translation {
     color: var(--background-color);

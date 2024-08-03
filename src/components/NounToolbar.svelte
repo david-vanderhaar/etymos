@@ -1,7 +1,8 @@
 <script>
+  import { onMount } from 'svelte';
   import { getToolIcon } from "../lib/tools";
   import { GlobalEventBus } from "../lib/events";
-  import { onMount } from 'svelte';
+  import { titleToTooltip } from "../actions/titleToTooltip"
 
   export let tools = []
 
@@ -33,6 +34,7 @@
   {#each tools as tool, index}
     <sup>{index + 1}</sup>
     <button 
+      use:titleToTooltip
       title="{tool.text}"
       on:click={() => handleClickTool(tool)}
       disabled={tool.loading}
