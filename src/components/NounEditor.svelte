@@ -197,6 +197,7 @@
         {:else if noun.word === '\n' || noun.word === ' \n'}
           <br>
         {:else}
+          <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
           <span 
             class="noun"
             class:noun__related={noun.related}
