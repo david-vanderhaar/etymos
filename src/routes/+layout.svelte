@@ -45,6 +45,18 @@
     color: var(--text-color);
   }
 
+  :global(button:focus-visible, button:focus) {
+    outline-width: 3px;
+    outline-color: var(--accent-color);
+    outline-style: dashed;
+  }
+
+  :global(.tippy-box) {
+    color: var(--accent-color);
+    background-color: var(--background-color);
+    padding: 8px;
+  }
+
   footer > div {
     margin-top: 40px;
   }

@@ -22,7 +22,10 @@ export function titleToTooltip(node, params = {}) {
 
   // Support any of the Tippy props by forwarding all "params":
   // https://atomiks.github.io/tippyjs/v6/all-props/
-  const tip = tippy(node, { content, ...params });
+  const tip = tippy(node, { 
+    content,
+    ...params 
+  });
 
   return {
     // If the props change, let's update the Tippy instance:
