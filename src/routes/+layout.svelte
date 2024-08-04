@@ -57,6 +57,10 @@
     padding: 8px;
   }
 
+  :global(sup) {
+    color: var(--accent-color);
+  }
+
   footer > div {
     margin-top: 40px;
   }

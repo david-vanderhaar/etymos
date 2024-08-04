@@ -26,6 +26,10 @@ const keyComboToEvent = [
     keys: new Set(['escape']),
     events: ['escape'],
   },
+  {
+    keys: new Set(['alt', 'z']),
+    events: ['remove_translation'],
+  },
   // noun transform tools
   ...Array(9).fill('').map((_, index) => {
     return {
