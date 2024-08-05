@@ -4,8 +4,12 @@
   import Box from "./Box.svelte";
   import NounEditor from "./NounEditor.svelte";
   import { GlobalEventBus } from "../lib/events";
-  
+  import IconButton from './IconButton.svelte';
+  import MdContentCopy from 'svelte-icons/md/MdContentCopy.svelte';
+  import { toast } from '../actions/titleToTooltip';
+
   let editor;
+  let nounEditor;
   let quill;
   let words = []
 	
@@ -80,16 +84,41 @@
 
     if (!quill.hasFocus()) quill.focus()
   })
+
+  function copyNounEditorContent() {
+    const nounEditorElement = document.getElementById('noun-editor')
+    navigator.clipboard.writeText('')
+    navigator.clipboard.writeText(nounEditorElement.innerText);
+    toast('copied to clipboard', nounEditorElement.parentElement)
+  }
+
+  function copyQuillEditorContent() {
+    navigator.clipboard.writeText('')
+    navigator.clipboard.writeText(quill.getText());
+    toast('copied to clipboard', editor)
+  }
+
+  GlobalEventBus.on('copy_noun_editor', () => {
+    copyNounEditorContent();
+  })
+
+  GlobalEventBus.on('copy_quill_editor', () => {
+    copyQuillEditorContent();
+  })
 </script>
 
 <div class="editor" class:editor--active={nounEditorActive}>
   <sup>alt + 1</sup>
-  <NounEditor words={words} />
+  <NounEditor words={words} bind:this={nounEditor} />
+  <IconButton icon={MdContentCopy} onClick={copyNounEditorContent} />
+  <sup>alt + shift + 1</sup>
 </div>
 <br />
 <div class="editor" class:editor--active={quillEditorActive}>
   <sup>alt + 2</sup>
   <Box><div bind:this={editor} id="editor"/></Box>
+  <IconButton icon={MdContentCopy} onClick={copyQuillEditorContent} />
+  <sup>alt + shift + 2</sup>
 </div>
 
 <style>

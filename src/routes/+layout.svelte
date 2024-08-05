@@ -30,6 +30,8 @@
 <style>
   @import 'quill/dist/quill.bubble.css';
   @import 'tippy.js/themes/translucent.css';
+  @import 'tippy.js/animations/shift-away.css';
+
 
   :global(:root) {
     --text-color: rgb(194 193 255);

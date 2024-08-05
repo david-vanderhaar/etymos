@@ -209,9 +209,7 @@
             on:focusout={() => removeActiveNoun(noun.word)}
             on:keydown={(e) => e.code === 'Space' && toggleSelectNoun(noun.word)}
             tabindex="0"
-          >
-            {noun.word}
-          </span>
+          >{noun.word}</span>
         {/if}
       {/each}
     </div>

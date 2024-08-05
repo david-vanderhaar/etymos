@@ -24,6 +24,7 @@ export function titleToTooltip(node, params = {}) {
   // https://atomiks.github.io/tippyjs/v6/all-props/
   const tip = tippy(node, { 
     content,
+    animation: 'shift-away',
     ...params 
   });
 
@@ -35,3 +36,28 @@ export function titleToTooltip(node, params = {}) {
     destroy: () => tip.destroy(),
   };
 };
+
+export function toast(message, element = document.body) {
+  const tippyInstance = tippy(
+    element, 
+    {
+      content: message,
+      trigger: 'manual',
+      placement: 'bottom',
+      theme: 'toast',
+      animation: 'shift-away',
+      onShow(instance) {
+        setTimeout(() => {
+          instance.hide();
+        }, 1000); // Hide after 1 second
+      },
+      onHidden(instance) {
+        instance.destroy();
+      },
+    }
+  );
+
+  tippyInstance.show();
+
+  return tippyInstance;
+}

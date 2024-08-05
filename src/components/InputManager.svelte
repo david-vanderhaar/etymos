@@ -30,6 +30,14 @@ const keyComboToEvent = [
     keys: new Set(['alt', 'z']),
     events: ['remove_translation'],
   },
+  {
+    keys: new Set(['alt', 'shift', '!']),
+    events: ['copy_noun_editor']
+  },
+  {
+    keys: new Set(['alt', 'shift', '@']),
+    events: ['copy_quill_editor']
+  },
   // noun transform tools
   ...Array(9).fill('').map((_, index) => {
     return {
@@ -49,7 +57,6 @@ function handleKeyDown(event) {
     return keys.difference(currentKeys).size === 0
   })?.events || []
   
-  console.log(appEvents);
   // dispatch events
   appEvents.forEach((appEvent) => GlobalEventBus.emit(appEvent))
 }
