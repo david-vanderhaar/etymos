@@ -1,16 +1,20 @@
 <script>
   import Box from "./Box.svelte";
   import { getToolIcon } from "../lib/tools.js"
-  import { GlobalEventBus } from '$lib/events';
+  import { GlobalEventBus } from '../lib/events';
+  import MdUndo from 'svelte-icons/md/MdUndo.svelte'
+  import IconButton from './IconButton.svelte';
 
   export let translations = [];
   export let deleteTranslation;
 
-  GlobalEventBus.on('remove_translation', () => {
+  function deleteLastTranslation() {
     if (!translations.length) return;
 
     deleteTranslation(translations.at(-1).uuid)
-  })
+  }
+
+  GlobalEventBus.on('remove_translation', deleteLastTranslation)
 
 </script>
 
@@ -30,7 +34,10 @@
           <br>
         </div>
       {/each}
-      <sup class="sup--hotkey">alt + z to undo</sup> 
+      <div class="actions">
+        <IconButton icon={MdUndo} onClick={deleteLastTranslation} />
+        <sup>alt + z</sup>
+      </div>
     {/if}
   </div>
 </Box>
@@ -60,7 +67,7 @@
     display: inline-block;
   }
 
-  .sup--hotkey {
+  #noun-translations .actions {
     float: right;
   }
 </style>

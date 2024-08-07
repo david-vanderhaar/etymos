@@ -17,7 +17,6 @@
 
   function focusFirstResult(node) {
     const buttons = node.querySelectorAll('.noun_translation_results > button.translation')
-    console.log(buttons);
     
     if (buttons.length) buttons[0].focus()
   }
