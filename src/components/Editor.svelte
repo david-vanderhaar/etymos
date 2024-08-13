@@ -1,6 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import * as StrongsConcordance from '../lib/concordances/strongs/finder';
+  import EtyJs from '../lib/ety-js/ety-js';
   import Box from "./Box.svelte";
   import NounEditor from "./NounEditor.svelte";
   import { GlobalEventBus } from "../lib/events";
@@ -45,7 +46,10 @@
   });
 
   // example of finder code
-  console.log(StrongsConcordance.findReplacements_v3('David'))
+  console.log('StrongsConcordance: ', StrongsConcordance.findReplacements_v3('David'))
+
+  // example of ety-js
+  console.log('EtyJs: ', EtyJs.origins('flower'))
 
   function getText() {
     if (!quill) return []

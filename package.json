@@ -23,6 +23,7 @@
     "quill-autoformat": "^0.1.2",
     "svelte": "^3.59.1",
     "svelte-icons": "^2.1.0",
-    "tippy.js": "^6.3.7"
+    "tippy.js": "^6.3.7",
+    "tree-model": "^1.0.7"
   }
 }
