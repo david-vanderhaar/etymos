@@ -6,6 +6,7 @@
   import TranslationHistory from './TranslationHistory.svelte';
   import TranslationResults from './TranslationResults.svelte';
   import { translationStore } from '../lib/data_stores/Stores.js';
+  import EtyJs from '../lib/ety-js/ety-js';
 
   export let words = []
   
@@ -84,11 +85,36 @@
       loading: false,
       action: async () => await datamuseToolAction('hom', 'homophone'),
     },
+    // {
+    //   text: 'Consonant Match',
+    //   type: 'consonant_match',
+    //   loading: false,
+    //   action: async () => await datamuseToolAction('cns', 'consonant_match'),
+    // },
     {
-      text: 'Consonant Match',
-      type: 'consonant_match',
+      text: 'Etymology',
+      type: 'etymology',
       loading: false,
-      action: async () => await datamuseToolAction('cns', 'consonant_match'),
+      action: () => {
+        Array.from(selectedNouns).map((noun) => {
+          const result = EtyJs.origins(noun, 'eng', true);
+
+          if (!result.length) {
+            console.log('No etymology results found for', noun);
+            return null;
+          }
+
+          translationResults = [
+            ...translationResults,
+            {
+              id: uuid(),
+              noun,
+              options: result.map((res) => res._word),
+              type: 'etymology',
+            }
+          ]
+        })
+      }
     },
   ]
 

@@ -48,11 +48,6 @@
   // example of finder code
   console.log('StrongsConcordance: ', StrongsConcordance.findReplacements_v3('David'))
 
-  // example of ety-js
-  console.log('EtyJs: ', EtyJs.origins('flower'))
-
-  window['Ety'] = EtyJs
-
   function getText() {
     if (!quill) return []
     const regex = /([^\s\n]+)|(\s)|(\n)/g;

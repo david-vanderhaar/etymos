@@ -10,6 +10,7 @@ import MdRadioButtonUnchecked from 'svelte-icons/md/MdRadioButtonUnchecked.svelt
 import MdRadioButtonChecked from 'svelte-icons/md/MdRadioButtonChecked.svelte'
 import MdMic from 'svelte-icons/md/MdMic.svelte'
 import MdContentCopy from 'svelte-icons/md/MdContentCopy.svelte'
+import GiFamilyTree from 'svelte-icons/gi/GiFamilyTree.svelte'
 
 const toolIconMap = {
   'synonym': MdExposurePlus1,
@@ -21,6 +22,7 @@ const toolIconMap = {
   'part_of': MdRadioButtonChecked,
   'homophone': MdMic,
   'consonant_match': MdContentCopy,
+  'etymology': GiFamilyTree,
 }
 
 export function getToolIcon(toolType) {
