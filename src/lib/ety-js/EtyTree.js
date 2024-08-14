@@ -23,12 +23,12 @@ class EtyTree {
 
   addChildren(parentNode, parentWord) {
     parentWord.origins().forEach(origin => {
-      const childNode = {
+      const childNode = new TreeModel().parse({
         id: origin._id,
         name: origin.pretty,
         data: origin.toJSON(),
         children: []
-      };
+      });
 
       // Check if the node already exists (avoiding duplicates)
       if (!parentNode.children.some(child => child.model.id === origin._id)) {

@@ -51,6 +51,8 @@
   // example of ety-js
   console.log('EtyJs: ', EtyJs.origins('flower'))
 
+  window['Ety'] = EtyJs
+
   function getText() {
     if (!quill) return []
     const regex = /([^\s\n]+)|(\s)|(\n)/g;
