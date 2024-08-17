@@ -47,6 +47,7 @@
 
   // example of finder code
   console.log('StrongsConcordance: ', StrongsConcordance.findReplacements_v3('David'))
+  window['StrongsConcordance'] = StrongsConcordance
 
   function getText() {
     if (!quill) return []
