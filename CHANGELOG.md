@@ -18,3 +18,6 @@
 - v0.0.5
   - add EtyJs for basic etymology lookups
   - add Strong's Concordance for biblical name lookups
+- v0.0.6
+  - TODO: 
+
