@@ -15,3 +15,6 @@
 - v0.0.4
   - add input manager
   - add hotkeys for no-mouse usage
+- v0.0.5
+  - add EtyJs for basic etymology lookups
+  - add Strong's Concordance for biblical name lookups

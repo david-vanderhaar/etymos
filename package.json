@@ -1,16 +1,17 @@
 {
   "name": "etymos",
   "private": true,
-  "version": "0.0.4",
+  "version": "0.0.5",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build",
     "publish": "pnpm run build && pnpm run deploy",
     "preview": "pnpm run build && vite preview",
-    "deploy": "touch build/.nojekyll && gh-pages -d build -t true"
+    "deploy": "touch build/.nojekyll && gh-pages -d build -t"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "vite": "^5.2.0"
   },
   "dependencies": {
@@ -23,6 +24,7 @@
     "quill-autoformat": "^0.1.2",
     "svelte": "^3.59.1",
     "svelte-icons": "^2.1.0",
-    "tippy.js": "^6.3.7"
+    "tippy.js": "^6.3.7",
+    "tree-model": "^1.0.7"
   }
 }
