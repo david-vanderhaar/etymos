@@ -23,6 +23,7 @@ const toolIconMap = {
   'homophone': MdMic,
   'consonant_match': MdContentCopy,
   'etymology': GiFamilyTree,
+  'strongs_concordance': MdRadioButtonUnchecked,
 }
 
 export function getToolIcon(toolType) {

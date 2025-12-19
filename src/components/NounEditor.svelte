@@ -7,6 +7,8 @@
   import TranslationResults from './TranslationResults.svelte';
   import { translationStore } from '../lib/data_stores/Stores.js';
   import EtyJs from '../lib/ety-js/ety-js';
+  import * as StrongsConcordance from '../lib/concordances/strongs/finder';
+
 
   export let words = []
   
@@ -110,6 +112,31 @@
               id: uuid(),
               noun,
               options: result.map((res) => res._word),
+              type: 'etymology',
+            }
+          ]
+        })
+      }
+    },
+    {
+      text: 'Strongs Concordance',
+      type: 'strongs_concordance',
+      loading: false,
+      action: () => {
+        Array.from(selectedNouns).map((noun) => {
+          const result = StrongsConcordance.findReplacements_v3(noun)
+
+          if (!result.replacements.length) {
+            console.log('No concordance results found for', noun);
+            return null;
+          }
+
+          translationResults = [
+            ...translationResults,
+            {
+              id: uuid(),
+              noun,
+              options: result.replacements.map((word) => word),
               type: 'etymology',
             }
           ]
